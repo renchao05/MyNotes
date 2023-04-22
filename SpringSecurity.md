@@ -131,6 +131,8 @@ Acegi 安全 2007 年底正式成为了 Spring 组合项目，更名为"Spring S
 
 ## 2.3、权限管理中的相关概念
 
+![image-20230422141521293](image/SpringSecurity/image-20230422141521293.png)
+
 ### 2.3.1、主体
 
 - 英文单词：principal
@@ -477,6 +479,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 }
 ```
+
+下面方式也可以：
+
+```java
+@Configuration
+public class SecurityConfig {
+    @Bean
+    public UserDetailsService userDetailService() {
+        //使用org.springframework.security.core.userdetails.User类来定义用户
+        //定义两个用户
+        UserDetails user1 = User.builder().username("eric").password(bCryptPasswordEncoder().encode("123456")).roles("student").build();
+        UserDetails user2 = User.builder().username("thomas").password(bCryptPasswordEncoder().encode("123456")).roles("teacher").build();
+        //创建两个用户
+        InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+        userDetailsManager.createUser(user1);
+        userDetailsManager.createUser(user2);
+        return userDetailsManager;
+    }
+
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+
+
 
 ### 3.1.3、方式三：
 
@@ -1536,7 +1565,11 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 # 第 4 章 微服务权限方案
 
+参考若依
 
+[动力节点SpringSecurity框架视频教程-springsecurity+jwt实战精讲_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1DV4y1Z71y/)
+
+[JSON Web Tokens - jwt.io](https://jwt.io/)
 
 
 
