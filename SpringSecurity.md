@@ -1577,6 +1577,48 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 # 第 5 节 原理总结
 
+## 1、认证流程
+
+![img](image/SpringSecurity/a2e3ffa6d9052a8ecace632691fe25a4.png)
+
+![img](image/SpringSecurity/1ad10fc1f2fcf15ea47f110f787a39b5.png)
+
+
+
+### 1.1、登录信息存入session
+
+https://www.cnblogs.com/summerday152/p/13636285.html
+
+在SpringSecurity中，用户信息是在认证成功后存入session的。
+
+- 当用户登录时，SpringSecurity会调用UserDetailsService接口的loadUserByUsername方法，根据用户名查询用户的信息，包括密码、角色和权限。
+- 然后，SpringSecurity会将这些信息封装成一个UserDetails对象，并存入一个Authentication对象中。
+- 最后，SpringSecurity会将这个Authentication对象存入SecurityContextHolder中，以便后续的授权过程使用。
+- SecurityContextHolder是一个线程局部变量，它可以将Authentication对象与当前线程绑定，并保存在session中。
+
+> 由SecurityContextPersistenceFilter过滤器存入session。过滤器有个属性repo是SecurityContextRepository接口，通过这个接口把SecurityContext从session取出或保存的。
+
+### 1.2、SecurityContextHolder与session的关系
+
+SecurityContextHolder可以从session中获取或设置SecurityContext对象，也可以从session中清除SecurityContext对象。
+
+这是通过一个SecurityContextRepository接口来实现的，它负责将SecurityContext对象与HttpSession对象关联起来。
+
+SpringSecurity提供了一个默认的实现类HttpSessionSecurityContextRepository，它会在每次请求开始时，从session中读取SecurityContext对象，并存入SecurityContextHolder中；
+
+在每次请求结束时，从SecurityContextHolder中读取SecurityContext对象，并存入session中。
+
+这样，就可以保证用户的认证信息和授权信息在不同的请求之间保持一致。
+
+> SecurityContextHolder介绍：
+>
+> - SecurityContextHolder是一个类，它用于将一个SecurityContext对象与当前的执行线程关联起来。
+> - SecurityContext对象包含了当前用户的认证信息和授权信息，是SpringSecurity的核心组件。
+> - SecurityContextHolder提供了一些静态方法，可以用来获取、设置、清除当前线程的SecurityContext对象。
+> - SecurityContextHolder还可以指定一个SecurityContextHolderStrategy对象，用来决定如何存储和访问SecurityContext对象。
+> - SpringSecurity提供了三种策略：ThreadLocal、InheritableThreadLocal和Global。
+> - 默认情况下，使用ThreadLocal策略，即将SecurityContext对象存储在一个线程局部变量中。
+
 
 
 
