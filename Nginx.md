@@ -286,6 +286,7 @@ expires 30d;    #缓存30天
         server_name  www.123456.com;
 
         location /www/ {
+        	# alias ，root会把location后面的路径添加到data后面，alias不会，直接映射 到文件夹
             root /data/;
         }
 		

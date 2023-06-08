@@ -15,7 +15,7 @@
 
 - idea 2019.1.2
 
-### 1.1、maven设置
+## 2、maven设置
 
 ```xml
 <mirrors>
@@ -43,15 +43,15 @@
 </profiles>
 ```
 
-## 2、HelloWorld
+## 3、HelloWorld
 
 需求：浏览发送/hello请求，响应 Hello，Spring Boot 2 
 
-### 2.1、创建maven工程
+### 3.1、创建maven工程
 
 
 
-### 2.2、引入依赖
+### 3.2、引入依赖
 
 ```xml
 <groupId>com.chaoRen</groupId>
@@ -72,7 +72,7 @@
 </dependencies>
 ```
 
-### 2.3、创建主程序
+### 3.3、创建主程序
 
 ```java
 /**
@@ -87,7 +87,7 @@ public class MainApplication {
 }
 ```
 
-### 2.4、编写业务
+### 3.4、编写业务
 
 ```java
 @RestController
@@ -99,11 +99,11 @@ public class HelloController {
 }
 ```
 
-### 2.5、测试
+### 3.5、测试
 
 直接运行main方法
 
-### 2.6、简化配置
+### 3.6、简化配置
 
 `application.properties`
 
@@ -111,7 +111,7 @@ public class HelloController {
 server.port=8888
 ```
 
-### 2.7、简化部署
+### 3.7、简化部署
 
 将`pom.xml`. 在该`dependencies`部分下方插入以下行
 
