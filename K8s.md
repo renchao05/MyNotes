@@ -8,11 +8,3 @@ Pod phase 可能存在的值
 RS与Deployment的关联
 
 ![image-20230722164059927](image/K8s/image-20230722164059927.png)
-
-Service 原理及概念
-
-![image-20230722214124231](image/K8s/image-20230722214124231.png)
-
-
-
-![image-20230723074157208](image/K8s/image-20230723074157208.png)
