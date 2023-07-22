@@ -305,7 +305,8 @@ target
 	excludesfile = C:/Users/KEFU/git.ignore
 ```
 ## 7.2 配置 Git 程序
-## ![image.png](image/Git/1649480345916-819a3b24-2ac5-4fb5-90d1-66eae5c2e912.png)
+![image.png](image/Git/1649480345916-819a3b24-2ac5-4fb5-90d1-66eae5c2e912.png)
+
 7.3 初始化本地库
 ![image.png](image/Git/1649480591019-db419ad8-2a54-40da-a778-cbba5a993938.png)
 选择要创建 Git 本地仓库的工程。
