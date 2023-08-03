@@ -225,3 +225,194 @@ rm -rf /etc/iptables && reboot
   - cat /etc/ssh/sshd_config  | grep sftp
 - WinSCP高级设置 SFTP里设置SFTP服务器 
   - sudo /usr/lib/openssh/sftp-server
+
+
+
+# linux设置代理
+
+[linux设置代理教程 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/555464350)
+
+很多开发者由于工作原因使用的是linux操作系统，在工作中会遇到需要修改ip的操作，这时候会用到代理ip，很多用户不知道如何设置，今天我们分享几个方法来修改linux的系统代理设置。
+
+方法如下：
+
+## 一、为系统设置代理
+
+编辑文件/etc/profile，增加如下两行
+
+```text
+export http_proxy=http://proxy.com:8080/
+export https_proxy=http://proxy.com:8080/
+```
+
+然后更新一下环境文件：
+
+```text
+source /etc/profile
+```
+
+## 二、为yum配置代理
+
+在/etc/yum.conf后面添加以下内容：
+如果代理不需要用户名密码认证：
+
+```text
+proxy=http://proxy.com:8080/
+```
+
+如果需要认证
+
+```text
+proxy=http://proxy.com:8080/
+proxy_username=代理服务器用户名
+proxy_password=代理服务器密码
+```
+
+然后更新一下环境文件：
+
+```text
+#使用source后者source yum.conf
+source
+source /etc/yum.conf
+```
+
+## 三、为wget代理设置：
+
+编辑文件为：/etc/wgetrc
+添加下面两行：
+
+```text
+http_proxy=http://proxy.com:8080/
+https_proxy=http://proxy.com:8080/
+```
+
+然后更新一下环境文件：
+
+```text
+#使用source后者source /etc/wgetrc
+source
+source /etc/wgetrc
+```
+
+## 四、网页上网
+
+网页上网设置代理很简单，在firefox浏览器下 Edit–>>Preferences–>>Advanced–>>Network
+在Connection下点击Settings，里面的manual proxy configuration里设置IP和PORT即可
+
+## 五、pptp上网配置方法
+
+**1、验证内核是否加载了MPPE模块：**
+
+modprobe ppp-compress-18 && echo MPPE is ok
+
+**2、安装所需的软件包：**
+
+yum -y install ppp
+wget ftp://rpmfind.net/linux/epel/7/x86_64/p/pptpd-1.4.0-2.el7.x86_64.rpm
+rpm -ivh pptpd-1.4.0-2.el7.x86_64.rpm
+
+**3、配置PPP和PPTP的配置文件：**
+
+grep ^[^#] /etc/ppp/options.pptpd
+
+vi /etc/ppp/options.pptpd
+
+```text
+name pptpd 
+#refuse-pap 
+#refuse-chap 
+#refuse-mschap 
+require-mschap-v2 
+require-mppe-128 
+ms-dns 8.8.8.8 
+ms-dns 8.8.4.4 
+proxyarp 
+lock 
+nobsdcomp 
+novj 
+novjccomp 
+nologfd 
+```
+
+vi /etc/ppp/chap-secrets
+
+```text
+username  pptpd  passwd  * 
+```
+
+vi /etc/pptpd.conf
+
+```text
+option /etc/ppp/options.pptpd
+logwtmp
+localip 192.168.0.1
+remoteip 192.168.0.207-217 
+```
+
+**4、打开内核的IP转发功能：**
+
+vi /etc/sysctl.conf
+
+```text
+net.ipv4.ip_forward = 1 
+```
+
+/sbin/sysctl -p
+
+**5、配置防火墙和NAT转发**
+
+```text
+yum install iptables-services 
+systemctl stop firewalld.service 
+systemctl disable firewalld.service 
+systemctl enable iptables.service 
+systemctl start iptables.service 
+```
+
+开启包转发：
+
+```text
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eno16777736 -j MASQUERADE 
+service iptables save 
+service iptables restart 
+```
+
+开放端口和gre协议：
+
+```text
+iptables -A INPUT -p tcp -m state --state NEW,RELATED,ESTABLISHED -m tcp --dport 1723 -j ACCEPT 
+iptables -A INPUT -p gre -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT 
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eno16777736 -j MASQUERADE 
+```
+
+添加规则：
+
+```text
+iptables -A INPUT -p gre -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 1723 -j ACCEPT
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -s 192.168.0.0/24 -o eno16777736 -j ACCEPT
+iptables -A FORWARD -d 192.168.0.0/24 -i eno16777736 -j ACCEPT
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eno16777736 -j MASQUERADE
+service iptables save 
+```
+
+启动和查看服务：
+
+```text
+systemctl start pptpd
+systemctl enable pptpd
+systemctl status pptpd 
+```
+
+**6.查看pptpd服务进程和端口：**
+
+```text
+#ps -ef | grep pptpd
+root   25100   1 0 14:19 ?    00:00:00 /usr/sbin/pptpd -f
+root   25463 24275 0 14:52 pts/0  00:00:00 grep --color=auto pptpd
+# netstat -nutap | grep pptpd
+tcp    0   0 0.0.0.0:1723      0.0.0.0:*        LISTEN   25100/pptpd 
+```
+
+以上就是我为大家介绍的linux几种设置代理的方法，希望对大家有所帮助，代理IP这快可以在这家领取免费测试。
