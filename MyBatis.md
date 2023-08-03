@@ -675,7 +675,9 @@ SQL 映射文件只有很少的几个顶级元素（按照应被定义的顺序�
     </select>
 ```
 
-## 6、foreach批量插入
+## 6、foreach
+
+批量插入
 
 ```xml
 <insert id="addUser">
@@ -685,6 +687,22 @@ SQL 映射文件只有很少的几个顶级元素（按照应被定义的顺序�
     </foreach>
 </insert>
 ```
+
+in 查询
+
+数组用.length，List使用.size
+
+```xml
+<if test="nos != null and nos.length > 0">
+    and
+    inspection_no IN
+    <foreach collection="nos" item="no" open="(" separator="," close=")" index="index">
+        #{no}
+    </foreach>
+</if>
+```
+
+
 
 ## 7、bind
 
