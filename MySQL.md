@@ -475,6 +475,21 @@ select avg(sal) as avg_sal, deptno
 ```
 ## 6.4、查看表结构
 `desc 表名`
+
+
+
+## 6.5、修改主键初始值
+
+```
+ALTER TABLE 表名 AUTO_INCREMENT = 新的起始值;
+```
+
+
+
+
+
+
+
 # 7、函数
 ## 7.1、合计/统计函数
 ### 7.1.1、count
