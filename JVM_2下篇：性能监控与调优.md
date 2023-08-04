@@ -206,7 +206,7 @@ JIT相关的：
 **jstat -class** - 类装载情况
 ![1.jpg](image/1664945782089-0cc3f033-f6c8-4a6e-af07-396060df0d13.jpeg)
 
-> 加载的类数量，类字节数，卸载的类数量，卸载的类字节数，使用的时间
+> 加载的类数量，类字节数，卸载的类数量，卸载的类字节数，使用的时间(毫秒)
 
 
 
@@ -903,6 +903,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
 
 如何知道JVM默认使用的是混合模式呢？
 同样地，通过java -version命令：可以看到 mixed mode 字样，代表当前系统使用的是混合模式
+
 ### 4.1.3. 类型三：-XX参数选项
 **Boolean类型格式**
 ```shell
@@ -969,7 +970,7 @@ jinfo -flag <name>=<value> <pid>
 -XX:MaxMetaspaceSize / -XX:MaxPermSize=256m 设置元空间/永久代最大值为256M
 -XX:+UseCompressedOops 使用压缩对象
 -XX:+UseCompressedClassPointers 使用压缩类指针
--XX:CompressedClassSpaceSize 设置Klass Metaspace的大小，默认1G
+-XX:CompressedClassSpaceSize 设置class Metaspace的大小，默认1G
 
 # 直接内存
 -XX:MaxDirectMemorySize 指定DirectMemory容量，默认等于Java堆最大值
