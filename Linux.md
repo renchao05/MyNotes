@@ -1680,6 +1680,16 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 
 
+### 13.3.3 关闭防火墙
+
+> systemctl stop firewalld
+>
+> systemctl disable firewalld
+
+
+
+
+
 # 十四、 进程管理(重点)
 
 ## 14.1 基本介绍
