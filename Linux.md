@@ -1517,6 +1517,10 @@ Linux 系统是一个多用户多任务的操作系统，任何一个要使用�
 - 查询系统整体磁盘使用情况
   `df -h`
 
+- 查看当前目录：`du -sh .`
+  
+- 查看指定目录：`du -sh /home`
+  
 - 查询指定目录的磁盘占用情况
 
   - 基本语法
@@ -1685,7 +1689,41 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 > systemctl stop firewalld
 >
 > systemctl disable firewalld
+=======
+## 13.4 SSH隧道
 
+在本地服务器上执行以下命令：
+
+`ssh -R <remote_port>:localhost:<local_port> <remote_user>@<remote_server>`
+
+- `<remote_port>`：是远程服务器上的一个端口，用于接收远程连接。
+- `<local_port>`：是本地服务器上你想要远程服务器连接的端口。
+- `<remote_user>`：是远程服务器的用户名。
+- `<remote_server>`：是远程服务器的地址或域名。
+
+例如，假设你希望本地服务器上的端口 8080 被远程服务器连接，远程服务器的 IP 地址是 123.45.67.89，远程服务器的用户名是 remoteuser，你可以执行以下命令：
+
+`ssh -R 12345:localhost:8080 remoteuser@123.45.67.89`
+
+> 输入远程服务器的密码：执行上述命令后，系统会提示你输入远程服务器的密码。输入正确的密码后，SSH 反向隧道将会建立起来。
+>
+> 连接到本地服务器：现在，远程服务器就可以通过连接到自己的 localhost（127.0.0.1）上的 `<remote_port>`（在上述例子中是 12345），实际上就是连接到你的本地服务器上的 `<local_port>`（在上述例子中是 8080）。
+
+
+
+## 13.5 设置网络代理
+
+```bash
+export http_proxy="http://localhost:12345"
+export https_proxy="http://localhost:12345"
+#非必须
+export socks_proxy="http://localhost:12345"
+
+#验证是否成功
+echo $http_proxy
+echo $https_proxy
+echo $socks_proxy
+```
 
 
 
@@ -2222,6 +2260,18 @@ Yum 是一个 Shell 前端软件包管理器。
   `baseurl=file:///mnt/cdrom` 地址为自己的光盘挂载地址 file:// 为固定格式不能省略 /mnt/cdrom为光盘挂载地址
   把下面两个多余地址用#注释了
   然后把enabled=0改为`enabled=1` 让源配置文件生效
+
+### 15.2.5 代理
+
+vi /etc/yum.conf
+
+在 `yum.conf` 文件中添加以下行，替换 `<proxy-url>` 和 `<proxy-port>` 为你的代理服务器的地址和端口号：
+
+```php
+proxy=http://<proxy-url>:<proxy-port>
+```
+
+
 
 
 
