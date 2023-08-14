@@ -1696,6 +1696,12 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 
 
+### 13.3.3 关闭防火墙
+
+> systemctl stop firewalld
+>
+> systemctl disable firewalld
+=======
 ## 13.4 SSH隧道
 
 ### 13.4.1 本地转发
@@ -1745,7 +1751,6 @@ echo $socks_proxy
 ```
 
 > 上面设置只在当前的 Shell 会话中生效
-
 
 
 # 十四、 进程管理(重点)
