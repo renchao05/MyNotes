@@ -1689,7 +1689,10 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 > systemctl stop firewalld
 >
 > systemctl disable firewalld
-=======
+
+
+
+
 ## 13.4 SSH隧道
 
 在本地服务器上执行以下命令：
