@@ -1704,8 +1704,72 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 
 
+### 13.3.4 netstat 和 ss
+
+- 显示正在监听TCP，UDP的端口
+  ss -tuln
+- 查看某个监听端口对应的进程信息
+  ss -tulnp | grep <本地端口>
+- 显示已经建立连接的端口
+  ss -tuln state established
+
+- 查看某个连接的详细信息
+  lsof -i :<本地端口>
+
+```bash
+-h, --help          显示此帮助信息
+-V, --version       显示版本信息
+-n, --numeric       不解析服务名称
+-r, --resolve       解析主机名
+-a, --all           显示所有套接字
+-l, --listening     显示监听套接字
+-o, --options       显示计时器信息
+-e, --extended      显示详细的套接字信息
+-m, --memory        显示套接字内存使用情况
+-p, --processes     显示使用套接字的进程
+-i, --info          显示内部TCP信息
+-s, --summary       显示套接字使用摘要
+-b, --bpf           显示bpf过滤器套接字信息
+-E, --events        持续显示销毁的套接字
+-Z, --context       显示进程SELinux安全上下文
+-z, --contexts      显示进程和套接字SELinux安全上下文
+-N, --net           切换到指定的网络命名空间名称
+
+-4, --ipv4          仅显示IP版本4的套接字
+-6, --ipv6          仅显示IP版本6的套接字
+-0, --packet        显示PACKET套接字
+-t, --tcp           仅显示TCP套接字
+-S, --sctp          仅显示SCTP套接字
+-u, --udp           仅显示UDP套接字
+-d, --dccp          仅显示DCCP套接字
+-w, --raw           仅显示RAW套接字
+-x, --unix          仅显示Unix域套接字
+   --vsock         仅显示vsock套接字
+-f, --family=FAMILY 显示类型为FAMILY的套接字
+   FAMILY := {inet|inet6|link|unix|netlink|vsock|help}
+
+-K, --kill          强制关闭套接字，显示被关闭的内容
+-H, --no-header     禁止显示头部行
+
+-A, --query=QUERY, --socket=QUERY
+   QUERY := {all|inet|tcp|udp|raw|unix|unix_dgram|unix_stream|unix_seqpacket|packet|netlink|vsock_stream|vsock_dgram}[,QUERY]
+
+-D, --diag=FILE     将关于TCP套接字的原始信息转储到FILE中
+-F, --filter=FILE   从FILE中读取过滤器信息
+   FILTER := [ state STATE-FILTER ] [ EXPRESSION ]
+   STATE-FILTER := {all|connected|synchronized|bucket|big|TCP-STATES}
+     TCP-STATES := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|closed|close-wait|last-ack|listen|closing}
+      connected := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+   synchronized := {established|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
+         bucket := {syn-recv|time-wait}
+            big := {established|syn-sent|fin-wait-{1,2}|closed|close-wait|last-ack|listen|closing}
+```
+
+
 
 ## 13.4 SSH隧道
+
+[彻底搞懂SSH端口转发命令 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/148825449)
 
 ### 13.4.1 本地转发
 
@@ -1729,9 +1793,9 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 动态端口转发可以把本地主机A上运行的SSH客户端转变成一个SOCKS代理服务器；
 
-> 可能因为远程服务器限制代理流量，没有测试成功
+> SOCKS 可以使用浏览器插件Proxy SwitchyOmega
 
-ssh -D local_port user@remote_host
+`ssh -D local_port user@remote_host`
 
 
 
