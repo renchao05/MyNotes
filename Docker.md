@@ -208,6 +208,8 @@ docker利用的是宿主机的内核,而不需要加载操作系统OS内核
 
 > docker虚悬镜像dangling image：
 > 仓库名、标签都是<none>的镜像，俗称虚悬镜像。
+>
+> 删除虚悬镜像：docker image prune -f
 
 ## 3、容器命令
 有镜像才能创建容器， 这是根本前提(下载一个CentOS或者ubuntu镜像演示)
