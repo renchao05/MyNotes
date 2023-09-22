@@ -25,7 +25,7 @@ Kubernetes是一种用于在一组主机上运行和协同容器化应用程序�
 6秘钥和配置管理：Kubernetes允许存储和管理敏感信息，例如密码，Oauth令牌和ssh秘钥。可以部署和更新密码和应用程序配置，而无需重建容器，也不会再堆栈配置中暴露机密。
 7存储编排：Kubernetes支持Pod对象按需自动挂载不同类型的存储系统，这包括节点本地存储、公有云服务商的云存储（如AWS和GCP等），以及网络存储系统（例如，NFS、ISCSI、GlusterFS、Ceph、Cinder和Flocker等）
 8批量处理执行：除了服务型应用，Kubernetes还支持批处理作业及CI（持续集成），如果需要，一样可以实现容器故障后修复。
-## 2、Kubernetes概述和术语
+## 2、概述和术语
 Kubernetes使用共享网络将多个物理机或虚拟机汇集到一个集群中，在各服务器之间进行通信，该集群是配置Kubernetes的所有组件、功能和工作负载的物理平台。集群中一台服务器（或高可用部署中的一组服务器）用作Master，负责管理整个集群，余下的其他机器用作Worker Node,它们是使用本地和外部资源接收和运行工作负载的服务器。集群中的这些主机可以是物理服务器，也可以是虚拟机（包括IaaS云端的VPS）
 
 ![](image/Kubernetes/1591068536801-bc14544b-514a-4376-a7ba-de1312c6d63f.png)
@@ -159,7 +159,7 @@ Service是一种工作于传输层的负载均衡器，而Ingress是在应用层
 [kubeadm项目地址](https://github.com/kubernetes/kubeadm)
 [kubeadm官方文档](https://kubernetes.io/docs/reference/setup-tools/kubeadm/)
 
-## 2、Kubeadm部署Kubernetes集群
+## 2、部署Kubernetes集群
 ### 2.1、架构图
 ![cluster.png](image/Kubernetes/1591069652829-66adb41b-0e10-43a1-af46-774eae7da766.png)
 
@@ -509,7 +509,7 @@ registry.aliyuncs.com/google_containers/pause        3.1                 da86e6b
 ```
 
 # 三、Kubernetes快速入门
-## 1、Kubernetes的核心对象
+## 1、核心对象
 API Server提供了RESTful风格的编程接口，其管理的资源是Kubernetes API中的端点，用于存储某种API对象的集合，例如，内置Pod资源是包含了所有Pod对象的集合。资源对象是用于表现集群状态的实体，常用于描述应于哪个节点进行容器化应用、需要为其配置什么资源以及应用程序的管理策略等，例如，重启、升级及容错机制。另外，一个对象也是一种“意向记录“——一旦创建，Kubernetes就需要一直确保对象始终存在。Pod、Deployment和Service等都是最常用的核心对象。
 ### 1.1、Pod资源对象
 > `Pod`资源对象是一种集合了一到多个应用容器、存储资源、专用`IP`及支撑容器运行的其他选项的逻辑组件，如图所示。`Pod`代表着`Kubernetes`的部署单元及原子运行单元，即一个应用程序的单一运行实例，它通常由共享资源且关系紧密的一个或多个应用容器组成。
@@ -850,7 +850,7 @@ deployment.extensions "mynginx" deleted
 
 
 # 四、资源清单
-## 1、Kubernetes常用资源对象
+## 1、常用资源对象
 > 依据资源的主要功能作为分类标准，`Kubernetes`的`API`对象大体可分为五个类别，如下：
 
 | 类型                       | 名称                                                         |
