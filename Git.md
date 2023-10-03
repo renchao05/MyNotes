@@ -196,12 +196,13 @@ ae51cc3 (HEAD -> master) HEAD@{3}: commit: renchao-2.0
 同时并行推进多个功能开发，提高开发效率。
 各个分支在开发过程中，如果某一个分支开发失败，不会对其他分支有任何影响。失败的分支删除重新开始即可。
 ## 4.3 分支的操作
-| **命令名称**          | **作用**                     |
-| --------------------- | ---------------------------- |
-| `git branch 分支名`   | 创建分支                     |
-| `git branch -v`       | 查看分支                     |
-| `git checkout 分支名` | 切换分支                     |
-| `git merge 分支名`    | 把指定的分支合并到当前分支上 |
+| **命令名称**         | **作用**                     |
+| -------------------- | ---------------------------- |
+| git branch 分支名    | 创建分支                     |
+| git branch -v        | 查看分支                     |
+| git checkout 分支名  | 切换分支                     |
+| git merge 分支名     | 把指定的分支合并到当前分支上 |
+| git branch -d 分支名 | 删除分支                     |
 
 ## 4.4 合并冲突分支
 
@@ -441,3 +442,134 @@ sudo vim /etc/gitlab/gitlab.rb        # 修改默认的配置文件；
 gitlab-rake gitlab:check SANITIZE=true --trace    # 检查gitlab；
 sudo gitlab-ctl tail        # 查看日志；
 ```
+
+
+
+
+
+# 第 11 章 高级
+
+https://www.bilibili.com/video/BV1bs411N7ny
+
+![image-20231002105252810](image/Git/image-20231002105252810.png)
+
+## 11.1 理论
+
+### 11.1.1 三棵树
+
+![image-20231002105432958](image/Git/image-20231002105432958.png)
+
+### 11.1.2 工作流程
+
+![image-20231002105600552](image/Git/image-20231002105600552.png)
+
+
+
+## 11.2 回到过去
+
+### 11.2.1 恢复工作目录文件
+
+撤销对文件的更改，并将其还原到暂存区的状态
+
+```bash
+git restore <file>
+git checkout -- <file>
+```
+
+
+
+### 11.2.2 checkout
+
+```bash
+# 恢复文件【丢弃工作目录中的修改】
+git checkout -- <file>
+
+# 切换分支
+git checkout <branch-name>
+# 切换到上一分支
+git checkout -
+
+# 创建新分支并切换到该分支
+git checkout -b <new-branch-name>
+# 上面命令相当于执行了下面两个命令
+git branch <new-branch-name>
+git checkout <new-branch-name>
+
+# 切换到特定的提交
+git checkout <commit-id>
+
+# 切换到某个标签（tag）
+git checkout tags/<tag-name>
+
+# 切换到前一个提交（通常用于撤销合并冲突时的操作）
+git checkout HEAD^
+
+# 切换到某个分支的某个文件的版本
+git checkout <branch-name> -- <file-path>
+```
+
+
+
+![image-20231002212802199](image/Git/image-20231002212802199.png)
+
+![image-20231002214629895](image/Git/image-20231002214629895.png)
+
+### 11.2.3 reset
+
+> HEAD~ 后面的波浪线表示上一个版本，波浪线的数量表示指针向前移动多少个版本
+>
+> --mixed 是默认选项，可以省略
+>
+> 回滚指定快照 `git reset 版本快照id`
+>
+> 回滚指定文件`git reset 版本快照 文件名/路径`
+
+![image-20231002214930559](image/Git/image-20231002214930559.png)
+
+## 11.3 修改提交
+
+### 11.3.1 修改提交信息
+
+```bash
+# 进入编辑窗口
+git commit --amend
+# 直接修改
+git commit --amend -m '要修改的信息'
+```
+
+### 11.3.2 删除文件
+
+```bash
+git rm 文件
+```
+
+
+
+## 11.4 分支
+
+### 11.4.1 创建
+
+```bash
+git branch 分支名
+```
+
+
+
+### 11.4.2 切换分支
+
+```bash
+ git checkout 分支名
+```
+
+
+
+### 11.4.3 查看分支
+
+```bash
+git log --decorate
+# --oneline 精简显示
+git log --decorate --oneline
+# --graph 图像化显示
+git log --decorate --oneline --graph --all
+```
+
