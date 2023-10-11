@@ -1771,11 +1771,6 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 
 
-
-
-
-
-
 ## 13.4 SSH隧道
 
 [彻底搞懂SSH端口转发命令 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/148825449)
