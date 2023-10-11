@@ -1663,7 +1663,11 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 ## 13.3 firewall 防火墙设置
 
+> 底层 iptables
+
 ### 13.3.1 端口说明
+
+> 可以通过`nc 127.0.0.1 80` 或者 `telnet 127.0.0.1 80` 查看端口能否连通
 
 - **查看系统端口情况**
   `netstat -anp | more`
