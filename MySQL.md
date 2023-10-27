@@ -15,6 +15,15 @@
 [https://github.com/webyog/sqlyog-community/wiki/Downloads](https://github.com/webyog/sqlyog-community/wiki/Downloads)
 ![image.png](image/1652249412787-4cbab1e7-7aff-463c-9176-6aa913e8b85f.png)
 注释的快捷键 shift+ctrl+c , 注销注释 shift+ctrl+r
+
+
+
+### 1.3.3、DBeaver
+
+[DBeaver Community | Free Universal Database Tool](https://dbeaver.io/)
+
+
+
 # 2、MYSQL 介绍
 ## 2.1、数据库三层结构
 数据库三层结构-破除 MySQL 神秘
