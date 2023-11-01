@@ -47,13 +47,23 @@ nginx 官网：
    - 进入解压后的文件夹 `./configure` 
    - 然后执行 `make && make install`
    - 也可以使用 yum 安装
+   
 - 第二步，安装 openssl 和 zlib
    - `yum -y install make zlib zlib-devel gcc-c++ libtool openssl openssl-devel`
+   
 - 第三步，安装 nginx
    - `wget http://nginx.org/download/nginx-1.12.2.tar.gz`
+   
    - 解压 `tar -zxvf nginx-1.12.2.tar.gz`
+   
    - 进入解压缩目录，执行`./configure`
+   
+     默认没有安装ssl模块，下面是添加ssl模块
+   
+     `./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_v2_module`
+   
    - 安装 `make && make install`
+   
 - 第四步，端口设置
    - 查看开放的端口号
       - `firewall-cmd --zone=public --list-ports`

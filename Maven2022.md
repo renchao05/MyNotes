@@ -771,25 +771,25 @@ Maven工程除了自己创建的，还有很多情况是别人创建的。而为
 #### ②导入 Java 类型模块
 
 1. 找到老师发的工程目录
-  ![image.png](image/1651206914236-8547e9e7-31a6-4e8b-bc2f-a4e114834460.png)
+    ![image.png](image/1651206914236-8547e9e7-31a6-4e8b-bc2f-a4e114834460.png)
 
 2. 复制我们想要导入的模块目录
-  ![image.png](image/1651206914831-bafb1146-7f3f-4253-bfa4-fb6926010d7e.png)
+    ![image.png](image/1651206914831-bafb1146-7f3f-4253-bfa4-fb6926010d7e.png)
 
 3. 粘贴到我们自己工程目录下
-  这个工程（project）是我们事先在 IDEA 中创建好的。
-  ![image.png](image/1651206915162-a4af5fee-1353-4bec-8874-90490f6658ec.png)
-  ![image.png](image/1651206914985-f811f473-c7c3-4864-9829-b1b71f582484.png)
+    这个工程（project）是我们事先在 IDEA 中创建好的。
+    ![image.png](image/1651206915162-a4af5fee-1353-4bec-8874-90490f6658ec.png)
+    ![image.png](image/1651206914985-f811f473-c7c3-4864-9829-b1b71f582484.png)
 
 4. 在 IDEA 中执行导入
-  ![image.png](image/1651206915033-3318565f-8625-486a-b50a-235baff94ea5.png)
-  ![image.png](image/1651206915478-2799a02f-fe42-419e-8bcf-6248c61ffe82.png)
-  ![image.png](image/1651206915748-9dfa2047-49bb-45ad-87c5-4d130e3e5900.png)
-  ![image.png](image/1651206916782-bc9d206e-71f9-4e70-ab38-b71c09cf3758.png)
+    ![image.png](image/1651206915033-3318565f-8625-486a-b50a-235baff94ea5.png)
+    ![image.png](image/1651206915478-2799a02f-fe42-419e-8bcf-6248c61ffe82.png)
+    ![image.png](image/1651206915748-9dfa2047-49bb-45ad-87c5-4d130e3e5900.png)
+    ![image.png](image/1651206916782-bc9d206e-71f9-4e70-ab38-b71c09cf3758.png)
 
 5. 修改 pom.xml
-  刚刚导入的 module 的父工程坐标还是以前的，需要改成我们自己的 project。
-  ![image-20220718114917982](image/image-20220718114917982.png)
+    刚刚导入的 module 的父工程坐标还是以前的，需要改成我们自己的 project。
+    ![image-20220718114917982](image/image-20220718114917982.png)
 
   ![image.png](image/1651206916774-b98f0af6-12cc-4758-9684-353b6a140306.png)
 1. 最终效果
@@ -858,3 +858,87 @@ Default 生命周期中有 compile 和 test-compile 两个和编译相关的环�
 > **建议：**不要中央仓库和阿里云镜像混用，否则 jar 包来源不纯，彼此冲突。
 
 专门搜索 Maven 依赖信息的网站：https://mvnrepository.com/
+
+
+
+
+
+# 第六章 插件
+
+## 1、项目版本控制
+
+[Maven Release plugin – Introduction (apache.org)](https://maven.apache.org/maven-release/maven-release-plugin/)
+
+发版：mvn release:prepare release:perform
+
+清理：mvn release:clean
+
+
+
+## 2、smart-doc
+
+[Document (smart-doc-group.github.io)](https://smart-doc-group.github.io/#/zh-cn/)
+
+resources目录新建smart-doc.json文件
+
+```json
+{
+  "outPath": "target\\word"
+}
+```
+
+pom.xml 添加插件
+
+```xml
+<plugin>
+    <groupId>com.github.shalousun</groupId>
+    <artifactId>smart-doc-maven-plugin</artifactId>
+    <version>2.6.9</version>
+    <configuration>
+        <!--指定生成文档的使用的配置文件,配置文件放在自己的项目中,如果不指定,默认文件名default.json-->
+        <configFile>./src/main/resources/smart-doc.json</configFile>
+        <includes>
+            <!--这里是只扫描当前的项目或模块，加快速度-->
+            <include>com.jiuyv.sptcc.agile.batch:agile-batch-dws</include>
+        </includes>
+    </configuration>
+</plugin>
+```
+
+> 如果不想在项目的pom.xml中添加插件，也可以在Maven的设置中添加
+> <pluginGroups>
+> 	<pluginGroup>com.github.shalousun</pluginGroup>
+> </pluginGroups>
+> 上面的smart-doc.json名称改为default.json
+> 需要生成文档时，在项目目录执行mvn smart-doc:html
+>
+> 建议在项目中添加，更加灵活
+
+
+
+```shell
+# 生成html
+mvn -Dfile.encoding=UTF-8 smart-doc:html
+#  生成markdown
+mvn -Dfile.encoding=UTF-8 smart-doc:markdown
+#  生成adoc
+mvn -Dfile.encoding=UTF-8 smart-doc:adoc
+# 生成postman json数据
+mvn -Dfile.encoding=UTF-8 smart-doc:postman
+# 生成 Open Api 3.0+,Since smart-doc-maven-plugin 1.1.5
+mvn -Dfile.encoding=UTF-8 smart-doc:openapi
+# 生成文档推送到Torna平台
+mvn -Dfile.encoding=UTF-8 smart-doc:torna-rest
+
+# Apache Dubbo RPC文档
+# Generate html
+mvn -Dfile.encoding=UTF-8 smart-doc:rpc-html
+# Generate markdown
+mvn -Dfile.encoding=UTF-8 smart-doc:rpc-markdown
+# Generate adoc
+mvn -Dfile.encoding=UTF-8 smart-doc:rpc-adoc
+
+# 生成dubbo接口文档推送到torna
+mvn -Dfile.encoding=UTF-8 smart-doc:torna-rpc
+```
+

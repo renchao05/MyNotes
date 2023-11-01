@@ -15,6 +15,15 @@
 [https://github.com/webyog/sqlyog-community/wiki/Downloads](https://github.com/webyog/sqlyog-community/wiki/Downloads)
 ![image.png](image/1652249412787-4cbab1e7-7aff-463c-9176-6aa913e8b85f.png)
 注释的快捷键 shift+ctrl+c , 注销注释 shift+ctrl+r
+
+
+
+### 1.3.3、DBeaver
+
+[DBeaver Community | Free Universal Database Tool](https://dbeaver.io/)
+
+
+
 # 2、MYSQL 介绍
 ## 2.1、数据库三层结构
 数据库三层结构-破除 MySQL 神秘
@@ -216,10 +225,27 @@ alter table employee character set utf8
 -- 列名 name 修改为 user_name
 alter table employee change `name` `user_name` varchar(64) not null default '' desc employee
 ```
-## 6.3、数据库 CRUD
+## 6.3、查看表结构
+
+`desc 表名`
+
+
+
+## 6.4、修改主键初始值
+
+```
+ALTER TABLE 表名 AUTO_INCREMENT = 新的起始值;
+```
+
+
+
+
+
+# 6-1、数据库 CRUD
+
 **C - create，R - read，U - update，D - delete**
 ![image.png](image/1652260174232-6ee6878c-9d8f-401f-a060-ce9392a28ecb.png)
-### 6.3.1、insert
+## 6-1.1、insert
 ```sql
 -- 创建一张商品表 goods (id int , goods_name varchar(10), price double );
 -- 添加 2 条记录
@@ -248,7 +274,7 @@ select * from goods;
 > 1. 默认值的使用，当不给某个字段值时，如果有默认值就会添加默认值，否则报错
 
 
-### 6.3.2、update
+## 6-1.2、update
 ```sql
 -- 1. 将所有员工薪水修改为 5000 元。
 -- [如果没有带 where 条件，会修改所有的记录，因此要小心]
@@ -265,7 +291,7 @@ update employee set salary = salary + 1000 , job = '出主意的' where user_nam
 
 select * from employee;
 ```
-### 6.3.3、delete
+## 6-1.3、delete
 ```sql
 -- 删除表中名称为’老妖怪’的记录。
 delete from employee where user_name = '老妖怪';
@@ -278,8 +304,8 @@ delete from employee;
 -- 要删除这个表
 drop table employee;
 ```
-### 6.3.4、select
-#### ①基本语法
+## 6-1.4、select
+### ①基本语法
 ```sql
 -- select 语句【重点 难点】
 create table student(
@@ -320,7 +346,7 @@ select `name`, (chinese + english + math + 10) from student;
 -- 使用别名表示学生分数。
 select `name` as '名字', (chinese + english + math + 10) as total_score from student
 ```
-#### ②where 运算符
+### ②where 运算符
 ![image.png](image/1652265060333-322c89c5-97cd-44c0-ab51-719c8e988930.png)
 ```sql
 -- select 语句
@@ -359,7 +385,7 @@ select * from student where math in (89, 90, 91);
 -- 查询所有姓韩的学生成绩。
 select * from student where `name` like '韩%'
 ```
-#### ③order by 排序
+### ③order by 排序
 
 - order by 指定排序的列，排序的列既可以是表中的列名，也可以是 select 语句后指定的列名
 - Asc升序[默认]、Desc 降序
@@ -377,7 +403,7 @@ select `name`, (chinese + english + math) as total_score from student
 	where `name` like '韩%'
 	order by total_score;
 ```
-#### ④group by 分组
+### ④group by 分组
 ```sql
 create table dept( /*部门表*/
 	deptno mediumint unsigned not null default 0,
@@ -456,7 +482,7 @@ select deptno, format(avg(sal),2), max(sal) from emp group by deptno;
 -- 2. 显示每个部门的每种岗位的平均工资和最低工资
 select deptno, job, avg(sal), min(sal) from emp group by deptno,job; 
 ```
-#### ⑤having 分组后过滤
+### ⑤having 分组后过滤
 ```sql
 -- 显示平均工资低于 2000 的部门号和它的平均工资 // 别名
 -- [写 sql 语句的思路是化繁为简,各个击破]
@@ -473,19 +499,6 @@ select avg(sal) as avg_sal, deptno
 	group by deptno
 	having avg_sal < 2000;
 ```
-## 6.4、查看表结构
-`desc 表名`
-
-
-
-## 6.5、修改主键初始值
-
-```
-ALTER TABLE 表名 AUTO_INCREMENT = 新的起始值;
-```
-
-
-
 
 
 

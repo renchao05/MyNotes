@@ -636,6 +636,7 @@ JProfiler通过对线程历史的监控判断其运行状态，并监控是否�
 - **监控器使用统计 Monitor Usage Statistics**：显示分组监测，线程和监测类的统计监测数据
 
 ## 3.6. Arthas
+
 上述工具都必须在服务端项目进程中配置相关的监控参数，然后工具通过远程连接到项目进程，获取相关的数据。这样就会带来一些不便，比如线上环境的网络是隔离的，本地的监控工具根本连不上线上环境。并且类似于Jprofiler这样的商业工具，是需要付费的。
 那么有没有一款工具不需要远程连接，也不需要配置监控参数，同时也提供了丰富的性能监控数据呢？
 阿里巴巴开源的性能分析神器Arthas应运而生。
@@ -650,99 +651,154 @@ Arthas是Alibaba开源的Java诊断工具，深受开发者喜爱。在线排查
 - 怎么快速定位应用的热点，生成火焰图？
 
 官方地址：[https://arthas.aliyun.com/doc/quick-start.html](https://arthas.aliyun.com/doc/quick-start.html)
-安装方式：如果速度较慢，可以尝试国内的码云Gitee下载。
-```shell
-wget https://io/arthas/arthas-boot.jar
-wget https://arthas/gitee/io/arthas-boot.jar
-```
-Arthas只是一个java程序，所以可以直接用java -jar运行。
-除了在命令行查看外，Arthas目前还支持 Web Console。在成功启动连接进程之后就已经自动启动,可以直接访问 [http://127.0.0.1:8563/](http://127.0.0.1:8563/) 访问，页面上的操作模式和控制台完全一样。
-**基础指令**
 
-```shell
-quit/exit 退出当前 Arthas客户端，其他 Arthas喜户端不受影响
-stop/shutdown 关闭 Arthas服务端，所有 Arthas客户端全部退出
-help 查看命令帮助信息
-cat 打印文件内容，和linux里的cat命令类似
-echo 打印参数，和linux里的echo命令类似
-grep 匹配查找，和linux里的gep命令类似
-tee 复制标隹输入到标准输出和指定的文件，和linux里的tee命令类似
-pwd 返回当前的工作目录，和linux命令类似
-cls 清空当前屏幕区域
-session 查看当前会话的信息
-reset 重置增强类，将被 Arthas增强过的类全部还原, Arthas服务端关闭时会重置所有增强过的类
-version 输出当前目标Java进程所加载的 Arthas版本号
-history 打印命令历史
-keymap Arthas快捷键列表及自定义快捷键
-```
+命令列表：[命令列表 | arthas (aliyun.com)](https://arthas.aliyun.com/doc/commands.html)
 
-**jvm相关**
-```shell
-dashboard 当前系统的实时数据面板
-thread 查看当前JVM的线程堆栈信息
-jvm 查看当前JVM的信息
-sysprop 查看和修改JVM的系统属性
-sysem 查看JVM的环境变量
-vmoption 查看和修改JVM里诊断相关的option
-perfcounter 查看当前JVM的 Perf Counter信息
-logger 查看和修改logger
-getstatic 查看类的静态属性
-ognl 执行ognl表达式
-mbean 查看 Mbean的信息
-heapdump dump java heap，类似jmap命令的 heap dump功能
+下面是常用命令
+
+### dashboard
+
+使用`dashboard`命令可以显示当前系统的实时数据面板，包括线程信息、JVM内存信息及JVM运行时参数。
+
+![图片](image/JVM_2下篇：性能监控与调优/640.png)
+
+### thread
+
+查看当前线程信息，查看线程的堆栈，可以找出当前最占CPU的线程。
+
+![图片](image/JVM_2下篇：性能监控与调优/640-16981503818041.png)
+
+常用命令：
+
+```bash
+# 打印当前最忙的3个线程的堆栈信息
+thread -n 3
+# 查看ID为1都线程的堆栈信息
+thread 1
+# 找出当前阻塞其他线程的线程
+thread -b
+# 查看指定状态的线程
+thread -state WAITING
 ```
 
-**class/classloader相关**
-```shell
-sc 查看JVM已加载的类信息
-	-d 输出当前类的详细信息，包括这个类所加载的原始文件来源、类的声明、加载的Classloader等详细信息。如果一个类被多个Classloader所加载，则会出现多次
-	-E 开启正则表达式匹配，默认为通配符匹配
-	-f 输出当前类的成员变量信息（需要配合参数-d一起使用）
-	-X 指定输出静态变量时属性的遍历深度，默认为0，即直接使用toString输出
-sm 查看已加载类的方法信息
-	-d 展示每个方法的详细信息
-	-E 开启正则表达式匹配,默认为通配符匹配
-jad 反编译指定已加载类的源码
-mc 内存编译器，内存编译.java文件为.class文件
-retransform 加载外部的.class文件, retransform到JVM里
-redefine 加载外部的.class文件，redefine到JVM里
-dump dump已加载类的byte code到特定目录
-classloader 查看classloader的继承树，urts，类加载信息，使用classloader去getResource
-	-t 查看classloader的继承树
-	-l 按类加载实例查看统计信息
-	-c 用classloader对应的hashcode来查看对应的 Jar urls
+### logger
+
+使用`logger`命令可以查看日志信息，并改变日志级别，这个命令非常有用。
+
+比如我们在生产环境上一般是不会打印`DEBUG`级别的日志的，当我们在线上排查问题时可以临时开启`DEBUG`级别的日志，帮助我们排查问题，下面介绍下如何操作。
+
+- 我们的应用默认使用的是`INFO`级别的日志，使用`logger`命令可以查看；
+
+![图片](image/JVM_2下篇：性能监控与调优/640-16981505171164.png)
+
+- 使用如下命令改变日志级别为`DEBUG`，需要使用`-c`参数指定类加载器的HASH值；
+
+```bash
+logger -c 21b8d17c --name ROOT --level debug
 ```
 
-**monitor/watch/trace相关**
+- 再使用`logger`命令查看，发现`ROOT`级别日志已经更改；
+
+![图片](image/JVM_2下篇：性能监控与调优/640-16981505171175.png)
+
+- 使用`docker logs -f mall-tiny-arthas`命令查看容器日志，发现已经打印了DEBUG级别的日志；
+
+![图片](image/JVM_2下篇：性能监控与调优/640-16981505171176.png)
+
+- 查看完日志以后记得要把日志级别再调回`INFO`级别。
+
 ```
-monitor 方法执行监控，调用次数、执行时间、失败率
-	-c 统计周期，默认值为120秒
-watch 方法执行观测，能观察到的范围为：返回值、抛出异常、入参，通过编写groovy表达式进行对应变量的查看
-	-b 在方法调用之前观察(默认关闭)
-	-e 在方法异常之后观察(默认关闭)
-	-s 在方法返回之后观察(默认关闭)
-	-f 在方法结束之后(正常返回和异常返回)观察(默认开启)
-	-x 指定输岀结果的属性遍历深度,默认为0
-trace 方法内部调用路径,并输出方法路径上的每个节点上耗时
-	-n 执行次数限制
-stack 输出当前方法被调用的调用路径
-tt 方法执行数据的时空隧道,记录下指定方法每次调用的入参和返回信息,并能对这些不同的时间下调用进行观测
+logger -c 21b8d17c --name ROOT --level info
 ```
 
-**其他**
-```shell
-jobs 列出所有job
-kill 强制终止任务
-fg 将暂停的任务拉到前台执行
-bg 将暂停的任务放到后台执行
-grep 搜索满足条件的结果
-plaintext 将命令的结果去除ANSI颜色
-wc 按行统计输出结果
-options 查看或设置Arthas全局开关
-profiler 使用async-profiler对应用采样，生成火焰图
+
+
+### jad
+
+反编译已加载类的源码，觉得线上代码和预期不一致，可以反编译看看。
+
+查看启动类的相关信息，默认会带有`ClassLoader`信息；
+
 ```
+jad com.macro.mall.tiny.MallTinyApplication
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815063247810.png)
+
+- 使用`--source-only`参数可以只打印类信息。
+
+```
+jad --source-only com.macro.mall.tiny.MallTinyApplication
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815063248211.png)
+
+### mc
+
+内存编译器，`Memory Compiler`的缩写，编译`.java`文件生成`.class`。
+
+### redefine
+
+加载外部的`.class`文件，覆盖掉 JVM中已经加载的类。
+
+### monitor
+
+实时监控方法执行信息，可以查看方法执行成功此时、失败次数、平均耗时等信息。
+
+```
+monitor -c 5 com.macro.mall.tiny.controller.PmsBrandController listBrand
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815063248212.png)
+
+### watch
+
+方法执行数据观测，可以观察方法执行过程中的参数和返回值。
+
+使用如下命令观察方法执行参数和返回值，`-x`表示结果属性遍历深度。
+
+```
+watch com.macro.mall.tiny.service.impl.PmsBrandServiceImpl listBrand "{params,returnObj}" -x 2
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815063248313.png)
+
+### 热更新
+
+我们需要查看该类的类加载器的Hash值；
+
+```
+sc -d *PmsBrandController | grep classLoaderHash
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815074180918.png)
+
+之后使用内存编译器把改`.java`文件编译成`.class`文件，注意需要使用`-c`指定类加载器；
+
+```
+mc -c 21b8d17c /tmp/PmsBrandController.java -d /tmp
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815074181119.png)
+
+最后使用`redefine`命令加载`.class`文件，将原来加载的类覆盖掉；
+
+```
+redefine -c 21b8d17c /tmp/com/macro/mall/tiny/controller/PmsBrandController.class
+```
+
+![图片](image/JVM_2下篇：性能监控与调优/640-169815074181120.png)
+
+我们再次调用接口进行测试，发现已经返回了预期的结果
+
+
+
+
+
+
 
 ## 3.7. Java Misssion Control
+
 在Oracle收购Sun之前，Oracle的JRockit虚拟机提供了一款叫做 JRockit Mission Control 的虚拟机诊断工具。
 在Oracle收购sun之后，Oracle公司同时拥有了Hotspot和 JRockit 两款虚拟机。根据Oracle对于Java的战略，在今后的发展中，会将JRokit的优秀特性移植到Hotspot上。其中一个重要的改进就是在Sun的JDK中加入了JRockit的支持。
 在Oracle JDK 7u40之后，Mission Control这款工具己经绑定在Oracle JDK中发布。
