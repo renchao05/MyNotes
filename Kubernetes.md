@@ -1388,6 +1388,9 @@ Events:
 > `Pod`对象自从其创建开始至其终止退出的时间范围称为其生命周期。在这段时间中，`Pod`会处于多种不同的状态，并执行一些操作；其中，创建主容器（`main container`）为必需的操作，其他可选的操作还包括运行初始化容器（`init container`）、容器启动后钩子（`post start hook`）、容器的存活性探测（`liveness probe`）、就绪性探测（`readiness probe`）以及容器终止前钩子（`pre stop hook`）等，这些操作是否执行则取决于`Pod`的定义。如下图所示：
 
 ![pod01.png](image/Kubernetes/1591154346091-2ae25005-27a0-4489-ba1e-90b0cda8d750.png)
+
+![image-20231020074234993](image/Kubernetes/image-20231020074234993.png)
+
 ### 4.1、Pod phase
 
 > `Pod`的`status`字段是一个`PodStatus`的对象，`PodStatus`中有一个`phase`字段。
@@ -2799,7 +2802,7 @@ nginx-statefulset-0   1/1     Running   0          12m   10.244.2.96   k8s-node2
 nginx-statefulset-1   1/1     Running   0          12m   10.244.1.96   k8s-node1   <none>           <none>
 nginx-statefulset-2   1/1     Running   0          12m   10.244.2.97   k8s-node2   <none>           <none>
 
-
+# 使用dig 命令需要安装 yum install -y bind-utils
 [root@k8s-master statefulset]# dig -t A nginx-statefulset-0.nginx-svc.default.svc.cluster.local @10.96.0.10
 ......
 ;; ANSWER SECTION:
@@ -3305,7 +3308,7 @@ PON
 PONG
 ```
 
-#### 2.2.2 NodePort示例
+#### 2.2.2、NodePort示例
 > `NodePort`即节点`Port`，通常在安装部署`Kubernetes`集群系统时会预留一个端口范围用于`NodePort`，默认为`30000~32767`之间的端口。定义`NodePort`类型的`Service`资源时，需要使用`.spec.type`明确指定类型为`NodePort`。
 
 
@@ -3340,7 +3343,7 @@ kind: Service
 metadata:
   name: nginx-svc    #service对象名
 spec:
-  type: NodePort    #这里指定使用ClusterIP，默认也是ClusterIP，这里可有可无
+  type: NodePort
   selector:
     app: nginx    #匹配上面定义的pod资源
   ports:
@@ -3520,6 +3523,7 @@ Address 2: 10.244.1.74 10-244-1-74.httpd-svc.default.svc.cluster.local
 Address 3: 10.244.2.72 10-244-2-72.httpd-svc.default.svc.cluster.local
 
 #(2)直接在kubernetes集群上解析
+# 使用dig需要安装 yum install -y bind-utils
 [root@k8s-master ~]# dig -t A  httpd-svc.default.svc.cluster.local. @10.96.0.10
 ......
 ;; ANSWER SECTION:
@@ -5062,4 +5066,326 @@ mysql> show databases;
 
 
 
-九、
+### 5.7、其他pv
+
+#### HostPath
+
+- **描述**：使用节点上的本地文件系统。
+- **适用场景**：适用于测试和开发环境，不适合生产环境。
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /path/on/host
+```
+
+#### Local Volume
+
+- **描述**：类似于 HostPath，但是具有更好的性能和可扩展性。
+- **适用场景**：适用于需要本地存储的应用。
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-local-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  local:
+    path: /path/on/host
+```
+
+
+
+### 5.8、pvc指定pv进行绑定
+
+PVC 与 PV 之间的绑定通常是通过 PVC 的 spec 中的 selector 字段完成的。
+
+selector 字段用于指定一组标签，这些标签必须与 PV 的标签匹配，以便 PVC 可以绑定到 PV。
+
+以下是一个简单的 PVC 示例，其中 selector 字段用于选择 PV：
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      type: example-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+  labels:
+    type: example-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /path/on/host
+
+```
+
+
+
+## 6、ConfigMap
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  my.cnf: |
+    [client]
+    default_character_set = utf8
+    [mysqld]
+    collation_server = utf8_general_ci
+    character_set_server = utf8
+
+```
+
+查看 kubectl get cm
+
+详情 kubectl describe cm mysql-config
+
+编辑 kubectl edit cm mysql-config 或 通过yaml文件修改，然后apply
+
+
+
+
+
+# 九、常用命令
+
+[Kubectl Reference Docs (kubernetes.io)](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#create)
+
+![img](image/Kubernetes/a66bf8256e2e4e7e8616b36a218f7299.png)
+
+## 0、资源缩写
+
+### 控制器
+
+Deployment（部署）：deploy
+ReplicaSet（副本集）：rs
+StatefulSet（有状态副本集）：sts
+DaemonSet（守护进程集）：ds
+Job：job
+CronJob：cronjob
+
+### 其他
+
+Pod（Pod）：pod
+Service（服务）：svc
+ConfigMap（配置映射）：cm
+Secret（机密）：secret
+Namespace（命名空间）：ns
+PersistentVolume（持久卷）：pv
+PersistentVolumeClaim（持久卷声明）：pvc
+ServiceAccount（服务账户）：sa
+Ingress（入口）：ing
+NetworkPolicy（网络策略）：netpol
+LimitRange（限制范围）：limits
+ResourceQuota（资源配额）：quota
+HorizontalPodAutoscaler（水平自动伸缩）：hpa
+Endpoints（端点）：endpoints
+Node（节点）：node
+Volume（卷）：vol
+
+## 1、集群管理
+
+`kubectl cluster-info`: 显示集群的基本信息。
+
+`kubectl config use-context <context_name>`: 切换到指定的上下文。
+
+`kubectl get nodes`: 列出集群中的节点。
+
+`kubectl describe node <node_name>`: 显示节点的详细信息。
+
+## 2、命名空间管理
+
+`kubectl get namespaces`: 列出所有命名空间。
+
+`kubectl create namespace <namespace_name>`: 创建一个命名空间。
+
+`kubectl delete namespace <namespace_name>`: 删除一个命名空间及其下的所有资源。
+
+`kubectl config set-context --current --namespace=<namespace_name>`: 设置当前上下文的命名空间。
+
+## 3、资源查看和操作
+
+`kubectl get <resource_type>`: 列出指定类型的资源。
+
+`kubectl describe <resource_type> <resource_name>`: 显示指定资源的详细信息。
+
+`kubectl create -f <yaml_file>`: 根据 YAML 文件创建资源。
+
+`kubectl apply -f <yaml_file>`: 根据 YAML 文件创建或更新资源。
+
+`kubectl delete <resource_type> <resource_name>`: 删除指定的资源。
+
+## 4、Pod 相关
+
+`kubectl get pods`: 列出所有 Pod。
+
+`kubectl describe pod <pod_name>`: 显示 Pod 的详细信息。
+
+`kubectl logs <pod_name>`: 查看 Pod 的日志。
+
+`kubectl log <pod名称> -c <容器名称>` 查看pod内指定容器log
+
+`kubectl exec -it <pod_name> -- <command>`: 在 Pod 内部执行命令。
+
+## 5、服务相关
+
+`kubectl get services`: 列出所有服务。
+
+`kubectl describe service <service_name>`: 显示服务的详细信息。
+
+`kubectl port-forward <pod_name> <host_port>:<container_port>`: 将本地端口转发到 Pod 的端口。
+
+## 6、部署相关
+
+`kubectl get deployments`: 列出所有部署。
+
+`kubectl describe deployment <deployment_name>`: 显示部署的详细信息。
+
+`kubectl scale deployment <deployment_name> --replicas=<replica_count>`: 扩展或缩减部署的副本数量。
+
+## 7、配置和密钥相关
+
+`kubectl create configmap <configmap_name> --from-file=<file_path>`: 创建配置映射。
+
+`kubectl create secret <secret_type> <secret_name> --from-literal=<key>=<value>`: 创建密钥。
+
+可以通过在命令后面添加 `--help` 选项来获取更多关于每个命令的详细帮助信息。例如：`kubectl get pods --help`。
+
+------
+
+## 8、更多
+
+### 水平自动扩展
+
+`kubectl autoscale deployment <deployment_name> --min=<min_replicas> --max=<max_replicas> --cpu-percent=<cpu_percentage>`: 创建水平自动扩展。
+
+`kubectl get hpa`: 列出所有水平自动扩展。
+
+`kubectl describe hpa <hpa_name>`: 显示水平自动扩展的详细信息。
+
+### 集群节点管理
+
+`kubectl cordon <node_name>`: 标记节点为不可调度状态。
+
+`kubectl uncordon <node_name>`: 取消标记节点的不可调度状态。
+
+`kubectl drain <node_name>`: 逐渐驱逐节点上的 Pod 并将其删除。
+
+### 配置文件操作
+
+`kubectl apply -f <directory>`: 从目录中递归地创建或更新所有资源。
+
+`kubectl diff -f <yaml_file>`: 比较文件中的配置与集群中的当前配置的差异。
+
+`kubectl get -o yaml <resource_type> <resource_name>`: 获取资源的 YAML 配置。
+
+`kubectl edit <resource_type> <resource_name>`: 编辑资源的配置。
+
+### 高级资源查询和筛选
+
+`kubectl get <resource_type> --all-namespaces`: 列出所有命名空间中的指定类型的资源。
+
+`kubectl get <resource_type> -l <label_key>=<label_value>`: 根据标签筛选指定类型的资源。
+
+### 持久化存储
+
+`kubectl get pv`: 列出所有持久卷。
+
+`kubectl get pvc`: 列出所有持久卷声明。
+
+`kubectl describe pv <pv_name>`: 显示持久卷的详细信息。
+
+`kubectl describe pvc <pvc_name>`: 显示持久卷声明的详细信息。
+
+### 集群状态和健康检查
+
+`kubectl get componentstatuses`: 显示集群组件的状态。
+
+`kubectl get cs`: 显示集群组件的状态的简写形式。
+
+`kubectl get nodes --watch`: 实时监视节点的状态变化。
+
+### 状态和调试
+
+`kubectl get events`: 列出集群中的事件。
+
+`kubectl describe event <event_name>`: 显示指定事件的详细信息。
+
+`kubectl top nodes`: 显示集群节点的资源使用情况。
+
+`kubectl top pods`: 显示集群中 Pod 的资源使用情况。
+
+### 执行命令和调试容器内部
+
+`kubectl exec -it <pod_name> -- <command>`: 在 Pod 内部执行命令。
+
+`kubectl logs <pod_name>`: 查看 Pod 的日志。
+
+`kubectl logs -f <pod_name>`: 实时跟踪 Pod 的日志输出。
+
+### 集群网络相关
+
+`kubectl get services`: 列出所有服务。
+
+`kubectl describe service <service_name>`: 显示服务的详细信息。
+
+`kubectl expose deployment <deployment_name> --port=<port> --target-port=<target_port>`: 暴露部署的端口。
+
+### 升级和回滚应用程序
+
+`kubectl set image deployment/<deployment_name> <container_name>=<new_image>`: 更新部署中容器的镜像。
+
+`kubectl rollout status deployment/<deployment_name>`: 检查部署的滚动更新状态。
+
+`kubectl rollout history deployment/<deployment_name>`: 查看部署的历史版本。
+
+`kubectl rollout undo deployment/<deployment_name>`: 回滚部署到先前的版本。
+
+### 节点调度和亲和性
+
+`kubectl label nodes <node_name> <label_key>=<label_value>`: 为节点添加标签。
+
+`kubectl label nodes <node_name> <label_key>-`: 删除节点上的标签。
+
+`kubectl taint nodes <node_name> <taint_key>=<taint_value>:<taint_effect>`: 在节点上设置容忍性。
+
+
+
+```bash
+#试着运行，检查语法
+kubectl apply --dry-run=client -f my-deployment.yaml
+
+
+#查看ConfigMap
+kubectl describe cm mysql-config
+```
+
