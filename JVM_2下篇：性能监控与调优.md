@@ -142,13 +142,9 @@
 
 # 二、 JVM监控及诊断工具-命令行篇
 ## 2.1. 概述
-性能诊断是软件工程师在日常工作中需要经常面对和解决的问题，在用户体验至上的今天，解决好应用的性能问题能带来非常大的收益。
-Java 作为最流行的编程语言之一，其应用性能诊断一直受到业界广泛关注。可能造成 Java 应用出现性能问题的因素非常多，例如线程控制、磁盘读写、数据库访问、网络I/O、垃圾收集等。想要定位这些问题，一款优秀的性能诊断工具必不可少。
 **体会1：使用数据说明问题，使用知识分析问题，使用工具处理问题。**
 **体会2：无监控、不调优！**
-**简单命令行工具**
-在我们刚接触java学习的时候，大家肯定最先了解的两个命令就是javac，java，那么除此之外，还有没有其他的命令可以供我们使用呢？
-我们进入到安装jdk的bin目录，发现还有一系列辅助工具。这些辅助工具用来获取目标 JVM 不同方面、不同层次的信息，帮助开发人员很好地解决Java应用程序的一些疑难杂症。
+我们进入到安装jdk的bin目录，可以发现一系列辅助工具。
 ![1.jpg](image/1664945703636-2a3a1238-b9c2-4329-a737-1ce7612be5d7.jpeg)
 官方源码地址：[http://hg.openjdk.java.net/jdk/jdk11/file/1ddf9a99e4ad/src/jdk.jcmd/share/classes/sun/tools](http://hg.openjdk.java.net/jdk/jdk11/file/1ddf9a99e4ad/src/jdk.jcmd/share/classes/sun/tools)
 
@@ -176,8 +172,8 @@ RMI注册表中注册的主机名。如果想要远程监控主机上的 java �
 ## 2.3. jstat：查看JVM统计信息
 jstat（JVM Statistics Monitoring Tool）：用于监视虚拟机各种运行状态信息的命令行工具。它可以显示本地或者远程虚拟机进程中的类装载、内存、垃圾收集、JIT编译等运行数据。在没有GUI图形界面，只提供了纯文本控制台环境的服务器上，它将是运行期定位虚拟机性能问题的首选工具。常用于检测垃圾回收问题以及内存泄漏问题。
 官方文档：[https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html)
-基本使用语法为：jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]
-查看命令相关参数：jstat-h 或 jstat-help
+基本使用语法为：`jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]`
+查看命令相关参数：jstat -h 或 jstat -help
 其中vmid是进程id号，也就是jps之后看到的前面的号码。
 
 **option参数**
@@ -416,9 +412,9 @@ jmap（JVM Memory Map）：作用一方面是获取dump文件（堆转储快照�
 官方帮助文档：[https://docs.oracle.com/en/java/javase/11/tools/jmap.html](https://docs.oracle.com/en/java/javase/11/tools/jmap.html)
 基本使用语法为：
 
-- jmap [option] <pid>
-- jmap [option] <executable <core>
-- jmap [option] [server_id@] <remote server IP or hostname>
+- `jmap [option] <pid>`
+- `jmap [option] <executable <core>`
+- `jmap [option] [server_id@] <remote server IP or hostname>`
 | 选项           | 作用                                                         |
 | -------------- | ------------------------------------------------------------ |
 | -dump          | 生成dump文件（Java堆转储快照），-dump:live只保存堆中的存活对象 |
