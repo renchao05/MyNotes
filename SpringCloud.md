@@ -1929,7 +1929,11 @@ public class GulimallFeignConfig {
 
 
 
+## 6、debug方法
 
+1、断点打在上面同步请求头的位置，然后通过方法栈进行跟踪。
+
+2、在SynchronousMethodHandler中的executeAndDecode()方法
 
 
 
