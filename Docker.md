@@ -1,4 +1,7 @@
 # 第 1 章、简介
+
+https://www.bilibili.com/video/BV1gr4y1U7CY/
+
 ## 1、是什么
 ### 1.1、docker出现
 Docker之所以发展如此迅速，也是因为它对此给出了一个标准化的解决方案-----系统平滑移植，容器虚拟化技术。
@@ -387,8 +390,11 @@ Docker中的镜像分层，支持通过扩展现有镜像，创建新的镜像�
 将阿里云上的镜像下载到本地
 ![image.png](image/1656294296962-eca609e6-efa7-4985-a368-3c8af3fc77bc.png)
 
-## 3、发布到私有库
+## 3、私有库Registry
 本地镜像发布到私有库 Docker Registry
+
+Docker 官方提供的 Registry 是一个开源的项目，用于存储和分发 Docker 镜像。它是一个轻量级的镜像仓库，提供基本的镜像存储和检索功能。Docker Registry 是一个通用的镜像存储解决方案，适用于各种场景。
+
 ### 3.1、安装运行Registry
 
 - 下载镜像Docker Registry
@@ -413,6 +419,18 @@ Docker中的镜像分层，支持通过扩展现有镜像，创建新的镜像�
 ### 3.3、拉取
 pull到本地
 `docker pull 192.168.123.205:5000/mylinux:1.3`
+
+
+
+## 4、私有库Harbor
+
+[Harbor (goharbor.io)](https://goharbor.io/)
+
+Harbor 是一个由 VMware 主导的开源项目，它构建在 Docker Registry 之上，并提供了更多的企业级功能。Harbor 支持多租户、安全扫描、策略管理、用户权限控制、LDAP/AD 集成等高级特性。Harbor 的目标是提供一个企业级的、安全的、可扩展的容器镜像仓库。
+
+
+
+
 
 # 第 6 章、容器数据卷
 > 注意：
