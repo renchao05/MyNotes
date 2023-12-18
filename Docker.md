@@ -399,11 +399,18 @@ Docker 官方提供的 Registry 是一个开源的项目，用于存储和分发
 
 - 下载镜像Docker Registry
    - `docker pull registry`
+   
 - 运行私有库Registry，相当于本地有个私有Docker hub
    - `docker run -d -p 5000:5000  -v /zzyyuse/myregistry/:/tmp/registry --privileged=true registry`
    - 默认情况，仓库被创建在容器的/var/lib/registry目录下，建议自行用容器卷映射，方便于宿主机联调
+   
 - curl验证私服库上有什么镜像
    - `curl -XGET http://192.168.123.205:5000/v2/_catalog`
+   
+   查看镜像版本
+   
+   - curl -X GET http://<registry_address>/v2/<repository_name>/tags/list
+   
 - 修改配置文件使之支持http
    - `vim /etc/docker/daemon.json`
    - 添加 `"insecure-registries": ["192.168.111.162:5000"]`
