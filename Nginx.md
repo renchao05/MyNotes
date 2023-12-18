@@ -1,4 +1,9 @@
 # 第 1 章 Nginx 简介
+
+https://www.bilibili.com/video/BV1zJ411w7SV
+
+https://www.bilibili.com/video/BV1yS4y1N76R/
+
 ## 1.1、Nginx 概述
 Nginx ("engine x") 是一个高性能的 HTTP 和反向代理服务器,特点是**占有内存少，并发能力强**，事实上 nginx 的并发能力确实在同类型的网页服务器中表现较好，中国大陆使用 nginx 网站用户有：百度、京东、新浪、网易、腾讯、淘宝等。
 常用版本分为四大阵营
