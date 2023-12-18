@@ -503,3 +503,62 @@ if ($invalid_referer) {
    - `curl -I http://192.168.44.101/img/logo.png`
 - 带引用
    - `curl -e "http://baidu.com" -I http://192.168.44.101/img/logo.png`
+
+
+
+
+
+# 第 11 章 prometheus监控
+
+[prometheus监控nginx的两种方式-CSDN博客](https://blog.csdn.net/lvan_test/article/details/123579531)
+
+## 11.1、方式一：tub_status
+
+- 开启nginx_stub_status模块
+
+  `./nginx -V 2>&1 | grep -o with-http_stub_status_module`
+
+  如果在终端输出with-http_stub_status_module，说明nginx已启用tub_status模块；
+
+- 添加nginx_stub_status模块
+
+  `./configure --with-http_stub_status_module`
+
+  `make & make install`
+
+- 指定status页面的URL；
+
+  ```bash
+  location /nginx_status {
+      stub_status on;
+      access_log off;
+      allow 127.0.0.1;
+      deny all;
+  }
+  ```
+
+  
+
+- 启动nginx-prometheus-exporter
+
+- 下载 https://github.com/nginxinc/nginx-prometheus-exporter/releases
+
+  - 解压 tar -zxvf
+  - 执行命令启动nginx-prometheus -exporter ；
+  - nohup ./nginx-prometheus-exporter -nginx.scrape-uri http://127.0.0.1:80/nginx_status &
+
+- prometheus.yml文件添加被监控的机器节点；
+
+  ```bash
+  - job_name: 'nginx_status_module' # 采集nginx的指标
+    metrics_path: '/metrics' # 拉取指标的接口路径
+    scrape_interval: 10s # 采集指标的间隔周期
+    static_configs:
+    - targets: ['127.0.0.1:9113'] # nginx-prometheus-exporter服务的ip和端口
+  ```
+
+  
+
+## 11.2、方式二：vts工具监控
+
+参考博客
