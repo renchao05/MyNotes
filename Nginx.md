@@ -537,7 +537,9 @@ if ($invalid_referer) {
   }
   ```
 
-  
+  > location地址需严格命名为nginx_status。
+  > allow 127.0.0.1和deny all表示仅允许本地访问。
+  > 若需允许Nginx组件访问，则可将这两行代码注释，或者将127.0.0.1设置为Nginx组件的IP地址。
 
 - 启动nginx-prometheus-exporter
 
