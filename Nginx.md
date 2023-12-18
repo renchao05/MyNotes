@@ -72,6 +72,24 @@ nginx 官网：
       - `firewall-cmd --add-port=80/tcp --permanent`
    - 重启防火墙
       - `firewall-cmd --reload`
+
+> 1、说明
+> linux configure --prefix 的作用是：编译的时候用来指定程序存放路径 。
+> ./configure --prefix=/usr/local/nginx
+> 如果不指定 --prefix则安装程序
+> 可执行文件默认放在 /usr/local/bin ；
+> 库文件默认放在 /usr/local/lib ；
+> 配置文件默认放在 /usr/local/etc ；
+> 其它的资源文件放在 /usr /local/share 。
+>
+> 2、如果指定 --prefix
+> 比如： --prefix=/usr/local/nginx ，则此软件的所有文件都放到 /usr/local/nginx 目录下，很整齐。
+>
+> 3、其他优点：
+> 卸载软件时，只须简单的删除该安装目录，就可以把软件卸载得干干净净；
+> 移植软件时，只需拷贝整个目录到另外一个机器即可；
+> 当然要卸载程序，也可以在原来的make目录下用一次make uninstall，但前提是make文件指定过uninstall 。
+
 # 第 3 章 常用命令和配置文件
 ## 3.1、常用的命令
 在 `/usr/local/nginx/sbin` 目录下执行。
