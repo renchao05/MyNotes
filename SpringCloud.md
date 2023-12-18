@@ -1937,6 +1937,61 @@ public class GulimallFeignConfig {
 
 
 
+## 7、使用OkHttpClient
+
+OpenFeign 在默认情况下使用的是基于 Java 标准库的 HttpURLConnection 作为其底层 HTTP 客户端。
+
+### 7.1、启用
+
+如果要使用OkHttpClient，可根据下面配置。
+
+①配置文件 `feign.okhttp.enabled=true`
+
+②添加两个依赖
+
+```xml
+<dependency>
+    <groupId>com.squareup.okhttp3</groupId>
+    <artifactId>okhttp</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-okhttp</artifactId>
+</dependency>
+```
+
+
+
+### 7.2、OkHttp拦截器
+
+```java
+@Bean
+public OkHttpClient okHttpClient() {
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    builder.addInterceptor(new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            // 拦截逻辑
+            System.out.println("OkHttpClient生效");
+            return null;
+        }
+    });
+    return builder.build();
+}
+```
+
+> 在这里还可以对OkHttpClient进行其他配置
+
+
+
+### 7.3、debug入口
+
+在 TracingFeignClient 类的 delegate 属性中放的就是发送http请求的Client。【默认是HttpURLConnection】
+
+执行在 TracingFeignClient 类的 execute 方法
+
+
+
 # 第十章、Hystrix断路器
 
 ## 1、概述
@@ -5945,7 +6000,43 @@ API分组配置参数示例：
     }
 ]
 ```
+## 12、统一异常处理
+
+[sentinel自定义统一限流降级处理 - 请叫我西毒 - 博客园 (cnblogs.com)](https://www.cnblogs.com/hhhshct/p/14315821.html)
+
+```java
+@Component
+public class MyBlockExceptionHandler implements BlockExceptionHandler {
+    private BlockExceptionUtil blockExceptionUtil;
+
+    public MyBlockExceptionHandler(BlockExceptionUtil blockExceptionUtil) {
+        this.blockExceptionUtil = blockExceptionUtil;
+    }
+    public MyBlockExceptionHandler() {
+    }
+
+    @Override
+    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, BlockException e) throws Exception {
+        BaseDtoResponse baseDtoResponse = blockExceptionUtil.getResponseDto(e, null);
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        httpServletResponse.setContentType("application/json;charset=utf-8");
+        httpServletResponse.setHeader("Content-Type","application/json;charset=utf-8");
+        new ObjectMapper().writeValue(httpServletResponse.getWriter(),baseDtoResponse);
+    }
+}
+```
+
+
+
+
+
+
+
+
+
 ## 11、熔断框架比较
+
 |                   | **Sentinel**                                           | **Hystrix**             | **resilience4j**                 |
 | ----------------- | ------------------------------------------------------ | ----------------------- | -------------------------------- |
 | 隔离策略          | 信号量隔离（并发控制）                                 | 线程池隔离/信号量隔离   | 信号量隔离                       |

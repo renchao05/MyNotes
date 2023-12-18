@@ -1151,7 +1151,9 @@ curl -X POST \
 
 
 
+## 9.11、lsof
 
+https://mp.weixin.qq.com/s/sj7t0mRJ5_awx0TRhj3wUg
 
 
 
@@ -1867,6 +1869,8 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 
 ## 13.5 设置网络代理
 
+### 13.5.1、当前会话代理
+
 ```bash
 export http_proxy="http://localhost:12345"
 export https_proxy="http://localhost:12345"
@@ -1880,6 +1884,38 @@ echo $socks_proxy
 ```
 
 > 上面设置只在当前的 Shell 会话中生效
+
+
+
+### 13.5.2、yum配置代理
+
+方式一：
+
+- 编辑 /etc/yum.conf 最后一行加入
+
+```bash
+proxy=http://<proxy_host>:<proxy_port>
+# 用户验证
+proxy=http://<username>:<password>@<proxy_host>:<proxy_port>
+```
+
+
+
+方式二：
+
+在执行 yum 命令时，可以使用 -x 参数指定代理。例如：
+
+```bash
+sudo yum -x http://<proxy_host>:<proxy_port> install <package-name>
+# 用户验证
+sudo yum -x http://<username>:<password>@<proxy_host>:<proxy_port> install <package-name>
+```
+
+
+
+
+
+
 
 
 # 十四、 进程管理(重点)
@@ -2354,7 +2390,7 @@ rpm 包名：firefox-60.2.2-1.el7.centos.x86_64
 
 - 基本语法
 
-  `rpm -ivh RPM 包全路径名称`
+  `rpm -ivh RPM包全路径名称`
 
 - 参数说明
 

@@ -406,6 +406,8 @@ global_defs {
 	smtp_connect_timeout 30
 	router_id LVS_DEVEL
 }
+
+# 在 vrrp_instance 部分需要配置 track_script 选项来关联 VRRP script,否则默认脚本不会执行。
 vrrp_script chk_http_port {
 	script "/usr/local/src/nginx_check.sh"
 	interval 2 #（检测脚本执行的间隔）
@@ -425,6 +427,10 @@ vrrp_instance VI_1 {
 	virtual_ipaddress {
 		192.168.123.50 // VRRP H 虚拟地址
 	}
+	
+	track_script { # 关联上面的 vrrp_script chk_http_port
+		chk_http_port
+	}
 }
 
 ```
@@ -432,7 +438,7 @@ vrrp_instance VI_1 {
 两台服务器都在 `/usr/local/src` 添加检测脚本
 ```bash
 #!/bin/bash
-A=`ps -C nginx –no-header |wc -l`
+A=$(ps -C nginx --no-header | wc -l)
 if [ $A -eq 0 ];then
 	/usr/local/nginx/sbin/nginx
 	sleep 2

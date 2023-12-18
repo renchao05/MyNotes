@@ -159,7 +159,10 @@ insert into t14(birthday, job_time)
 values('2022-11-11','2022-11-11 10:10:10'); 
 -- 如果我们更新 t14 表的某条记录，login_time 列会自动的以当前时间进行更新
 ```
+> 插入或更新表，获取当前时间可以使用CURRENT_TIMESTAMP，或NOW()
+
 # 6、操作表
+
 ## 6.1、创建表
 ```sql
 #创建表的课堂练习
