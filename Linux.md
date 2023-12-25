@@ -303,6 +303,28 @@ linux 运行稳定、对网络的良好支持性、低成本，且可以根据�
 
 
 
+## 5.5 服务器开启root登录
+
+- sudo su切换到root权限
+
+- 编辑 /etc/ssh/sshd_config
+
+  - ```bash
+    # 找到下面两个配置，去掉注释
+    PermitRootLogin yes
+    PasswordAuthentication yes
+    ```
+
+- 设置root密码：
+  sudo passwd root
+
+- 重启ssh
+  systemctl restart sshd
+
+
+
+
+
 # 六、 Vi 和 Vim
 
 ## 6.1 基本介绍
