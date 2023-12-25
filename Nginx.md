@@ -77,6 +77,24 @@ nginx 官网：
       - `firewall-cmd --add-port=80/tcp --permanent`
    - 重启防火墙
       - `firewall-cmd --reload`
+
+> 1、说明
+> linux configure --prefix 的作用是：编译的时候用来指定程序存放路径 。
+> ./configure --prefix=/usr/local/nginx
+> 如果不指定 --prefix则安装程序
+> 可执行文件默认放在 /usr/local/bin ；
+> 库文件默认放在 /usr/local/lib ；
+> 配置文件默认放在 /usr/local/etc ；
+> 其它的资源文件放在 /usr /local/share 。
+>
+> 2、如果指定 --prefix
+> 比如： --prefix=/usr/local/nginx ，则此软件的所有文件都放到 /usr/local/nginx 目录下，很整齐。
+>
+> 3、其他优点：
+> 卸载软件时，只须简单的删除该安装目录，就可以把软件卸载得干干净净；
+> 移植软件时，只需拷贝整个目录到另外一个机器即可；
+> 当然要卸载程序，也可以在原来的make目录下用一次make uninstall，但前提是make文件指定过uninstall 。
+
 # 第 3 章 常用命令和配置文件
 ## 3.1、常用的命令
 在 `/usr/local/nginx/sbin` 目录下执行。
@@ -508,3 +526,64 @@ if ($invalid_referer) {
    - `curl -I http://192.168.44.101/img/logo.png`
 - 带引用
    - `curl -e "http://baidu.com" -I http://192.168.44.101/img/logo.png`
+
+
+
+
+
+# 第 11 章 prometheus监控
+
+[prometheus监控nginx的两种方式-CSDN博客](https://blog.csdn.net/lvan_test/article/details/123579531)
+
+## 11.1、方式一：tub_status
+
+- 开启nginx_stub_status模块
+
+  `./nginx -V 2>&1 | grep -o with-http_stub_status_module`
+
+  如果在终端输出with-http_stub_status_module，说明nginx已启用tub_status模块；
+
+- 添加nginx_stub_status模块
+
+  `./configure --with-http_stub_status_module`
+
+  `make & make install`
+
+- 指定status页面的URL；
+
+  ```bash
+  location /nginx_status {
+      stub_status on;
+      access_log off;
+      allow 127.0.0.1;
+      deny all;
+  }
+  ```
+
+  > location地址需严格命名为nginx_status。
+  > allow 127.0.0.1和deny all表示仅允许本地访问。
+  > 若需允许Nginx组件访问，则可将这两行代码注释，或者将127.0.0.1设置为Nginx组件的IP地址。
+
+- 启动nginx-prometheus-exporter
+
+- 下载 https://github.com/nginxinc/nginx-prometheus-exporter/releases
+
+  - 解压 tar -zxvf
+  - 执行命令启动nginx-prometheus -exporter ；
+  - nohup ./nginx-prometheus-exporter -nginx.scrape-uri http://127.0.0.1:80/nginx_status &
+
+- prometheus.yml文件添加被监控的机器节点；
+
+  ```bash
+  - job_name: 'nginx_status_module' # 采集nginx的指标
+    metrics_path: '/metrics' # 拉取指标的接口路径
+    scrape_interval: 10s # 采集指标的间隔周期
+    static_configs:
+    - targets: ['127.0.0.1:9113'] # nginx-prometheus-exporter服务的ip和端口
+  ```
+
+  
+
+## 11.2、方式二：vts工具监控
+
+参考博客
