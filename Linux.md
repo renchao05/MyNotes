@@ -548,6 +548,23 @@ Linux 系统是一个多用户多任务的操作系统，任何一个要使用�
 
 
 
+## 8.10 修改用户uid和组gid
+
+[Linux中修改用户UID和组GID的方法_二进制怎么算-CSDN博客](https://blog.csdn.net/train006l/article/details/79007483)
+
+[How to Change a USER and GROUP ID on Linux For All Owned Files - nixCraft (cyberciti.biz)](https://www.cyberciti.biz/faq/linux-change-user-group-uid-gid-for-all-owned-files/)
+
+- 修改opc用户的uid为2005
+  usermod -u 2005 opc
+- 修改opc组的gid为2005
+  groupmod -g 2005 opc
+
+
+
+
+
+
+
 # 九、 实用指令
 
 ## 9.1 运行级别
