@@ -1,4 +1,4 @@
-# Spring5 框架概述
+Spring5 框架概述
 
 [尚硅谷Spring框架视频教程（spring5源码级讲解）_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1Vf4y127N5)
 
@@ -48,23 +48,39 @@
 
    ![image-20220127081301650](image/image-20220127081301650.png)
 
-## 2、BeanFactory 接口
+## 2、BeanFactory
 
-1. IOC 思想基于 IOC 容器完成，IOC 容器底层就是对象工厂
+### 2.1、介绍
 
-2. Spring 提供 IOC 容器实现两种方式：（两个接口）
+- IOC 思想基于 IOC 容器完成，IOC 容器底层就是对象工厂
+- Spring 的核心容器, 主要的 ApplicationContext 实现都【组合】了它的功能。
+- 控制反转、基本的依赖注入、Bean 生命周期的各种功能，都由它的实现类提供。
+- 主要实现类。
+  - DefaultListableBeanFactory，是 BeanFactory 最重要的实现。
+  - 像**控制反转**和**依赖注入**功能，都是它来实现
 
-   （1）BeanFactory：IOC 容器基本实现，是 Spring 内部的使用接口，不提供开发人员进行使用
 
-   * 加载配置文件时候不会创建对象，在获取对象（使用）才去创建对象
 
-   （2）ApplicationContext：BeanFactory 接口的子接口，提供更多更强大的功能，一般由开发人员进行使用
 
-   * 加载配置文件时候就会把在配置文件对象进行创建
+### 2.2、ApplicationContext
 
-3. ApplicationContext 接口有实现类
+- BeanFactory 的子接口，组合并扩展了 BeanFactory 的功能。
 
-   ![image-20220127081606728](image/image-20220127081606728.png)
+- 扩展了国际化、通配符方式获取一组 Resource 资源、整合 Environment 环境、事件发布与监听。
+
+- 主要实现类。
+
+  - ClassPathXmlApplicationContext，从类路径查找 XML 配置文件，创建容器（旧）
+  - FileSystemXmlApplicationContext，从磁盘路径查找 XML 配置文件，创建容器（旧）
+  - XmlWebApplicationContext，传统 SSM 整合时，基于 XML 配置文件的容器（旧）
+  - AnnotationConfigWebApplicationContext，传统 SSM 整合时，基于 java 配置类的容器（旧）
+  - AnnotationConfigApplicationContext，Spring boot 中非 web 环境容器（新）
+  - AnnotationConfigServletWebServerApplicationContext，Spring boot 中 servlet web 环境容器（新）
+  - AnnotationConfigReactiveWebServerApplicationContext，Spring boot 中 reactive web 环境容器（新）
+
+  > 后面这些带有 ApplicationContext 的类都是 ApplicationContext 接口的实现，但它们是**组合**了 DefaultListableBeanFactory 的功能，并非继承而来
+
+
 
 ## 3、概念
 

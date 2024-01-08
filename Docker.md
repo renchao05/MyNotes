@@ -209,8 +209,20 @@ docker利用的是宿主机的内核,而不需要加载操作系统OS内核
 | docker rmi XXX                | 删除镜像                       | -f：强制删除。删除全部docker rmi -f $(docker images -qa)   |
 | docker system prune --volumes | 清除docker镜像缓存             |                                                            |
 
+批量删除符合正则条件的镜像
+
+```bash
+# 比如：名称包含5000/mall，版本号是0.0.1的镜像
+# 10.0.0.86:5000/mall-auth-server    0.0.1    e0d081b9747d   6 days ago   469MB
+docker images | grep '5000/mall.*\b0\.0\.1\b' | awk '{print $3}' | xargs docker rmi
+```
+
+
+
 > docker虚悬镜像dangling image：
 > 仓库名、标签都是<none>的镜像，俗称虚悬镜像。
+>
+> 查看所有虚悬镜像：docker images -f "dangling=true"
 >
 > 删除虚悬镜像：docker image prune -f
 

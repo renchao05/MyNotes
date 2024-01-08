@@ -5179,9 +5179,173 @@ data:
 
 
 
+# 九、helm
+
+详细使用说明查看官网文档，有中文，也详细
+
+[Helm | Docs](https://helm.sh/zh/docs/)
+
+## 1、安装
+
+Helm 客户端下载地址：https://github.com/helm/helm/releases
+
+解压移动到/usr/bin/目录即可。
+
+```bash
+tar zxvf helm-v3.2.1-linux-amd64.tar.gz
+mv linux-amd64/helm /usr/bin/
+```
+
+## 2、常用命令
+
+| 命令       | 描述                                                         |
+| ---------- | ------------------------------------------------------------ |
+| create     | 创建一个 chart 并指定名字                                    |
+| dependency | 管理 chart 依赖                                              |
+| get        | 下载一个 release。可用子命令：all、hooks、manifest、notes、values |
+| history    | 获取 release 历史                                            |
+| install    | 安装一个 chart                                               |
+| list       | 列出 release                                                 |
+| package    | 将 chart 目录打包到 chart 存档文件中                         |
+| pull       | 从远程仓库中下载 chart 并解压到本地 # helm pull stable/mysql --untar |
+| repo       | 添加，列出，移除，更新和索引 chart 仓库。可用子命令：add、index、list、remove、update |
+| rollback   | 从之前版本回滚                                               |
+| search     | 根据关键字搜索 chart。可用子命令：hub、repo                  |
+| show       | 查看 chart 详细信息。可用子命令：all、chart、readme、values  |
+| status     | 显示已命名版本的状态                                         |
+| template   | 本地呈现模板                                                 |
+| uninstall  | 卸载一个 release                                             |
+| upgrade    | 更新一个 release                                             |
+| version    | 查看 helm 客户端版本                                         |
+
+## 3、chart 仓库配置
+
+- 微软仓库，推荐，基本上官网有的 chart 这里都有。
+  - http://mirror.azure.cn/kubernetes/charts/
+- 阿里云仓库
+  - https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+- 官方仓库
+  - https://charts.helm.sh/stable
+
+```bash
+# 添加存储库
+helm repo add stable http://mirror.azure.cn/kubernetes/charts
+helm repo add aliyun https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+helm repo update
+# 查看配置的存储库
+helm repo list
+helm search repo stable
+# 删除存储库：
+helm repo remove aliyun
+```
 
 
-# 九、常用命令
+
+## 4、helm 基本使用
+
+### 4.1、部署一个应用
+
+```bash
+#查找 chart
+helm search repo mysql
+
+#查看 chrt 信息
+helm show chart stable/mysql
+
+#安装包
+helm install ui stable/weave-scope
+
+#查看发布状态
+helm list
+helm status ui
+```
+
+
+
+### 4.2、自定义 chart 配置
+
+自定义选项是因为并不是所有的 chart 都能按照默认配置运行成功，可能会需要一些环境依赖，例如 PV。
+所以我们需要自定义 chart 配置选项，安装过程中有两种方法可以传递配置数据：
+
+- --values（或-f）
+  - 指定带有覆盖的 YAML 文件。这可以多次指定，最右边的文件优先
+- --set：
+  - 在命令行上指定替代。如果两者都用，--set 优先级高
+
+```bash
+# 查看values
+helm show values stable/mysql
+
+# 使用--values（或-f）
+helm install db -f config.yaml stable/mysql
+
+# 命令行--set替代变量
+helm install db --set persistence.storageClass="managed-nfs-storage" stable/mysql
+
+# 也可以把 chart 包下载下来查看详情
+helm pull stable/mysql --untar
+```
+
+helm install 命令可以从多个来源安装：
+
+- chart 存储库
+- 本地 chart 存档（helm install foo-0.1.1.tgz）
+- chart 目录（helm install path/to/foo）
+- 完整的 URL（helm install https://example.com/charts/foo-1.2.3.tgz）
+
+
+
+## 5、构建Helm Chart
+
+```bash
+# 创建
+helm create mychart
+tree mychart/
+mychart/
+├── charts
+├── Chart.yaml
+├── templates
+│   ├── deployment.yaml
+│   ├── _helpers.tpl
+│   ├── ingress.yaml
+│   ├── NOTES.txt
+│   ├── service.yaml
+└── values.yaml
+
+# 调试
+helm install web --dry-run mychart/
+# --debug可以输出详细信息
+helm install --debug --dry-run mychart/
+
+# 有些错误可以通过--disable-openapi-validation
+# 禁用校验查看错误原因
+helm install --dry-run --disable-openapi-validation mychart/
+
+# 部署
+helm install web mychart/
+# 打包 mychart-0.1.0.tgz
+helm package mychart/
+```
+
+文件说明
+
+- Chart.yaml
+  - 用于描述这个 Chart 的基本信息，包括名字、描述信息以及版本等。
+- values.yaml 
+  - 用于存储 templates 目录中模板文件中用到变量的值。
+- Templates
+  - 目录里面存放所有 yaml 模板文件。
+- NOTES.txt 
+  - 用于介绍 Chart 帮助信息， helm install 部署后展示给用户。
+  - 例如：如何使用这个 Chart、列出缺省的设置等。
+- _helpers.tpl
+  - 放置模板助手的地方，可以在整个 chart 中重复使用
+
+
+
+
+
+# 十、常用命令
 
 [Kubectl Reference Docs (kubernetes.io)](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#create)
 

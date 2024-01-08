@@ -1077,3 +1077,33 @@ public static void main(String[] args) throws IOException {
   ```
 
   
+
+# 第 20 章 - 坦克大战3【未整理】
+
+# 第 21 章 - 网络编程【未整理】
+
+# 第 22 章 - 用户即时通信系统【未整理】
+
+
+
+
+
+# 第 20 章 - 反射reflection[部分]
+
+## 通过反射设置final修饰属性
+
+[Java反射修改final修饰的属性值 - 简书 (jianshu.com)](https://www.jianshu.com/p/2d490b0155ad)
+
+```java
+Field modifier = Field.class.getDeclaredField("modifiers");
+modifier.setAccessible(true);
+
+Field restTemplateField = IpUtils.class.getDeclaredField("restTemplate");
+restTemplateField.setAccessible(true);
+modifier.setInt(restTemplateField, restTemplateField.getModifiers() & ~Modifier.FINAL);
+restTemplateField.set(null, restTemplate);
+// 需要注意内联优化，会出现修改成功，但读取的还是旧值(String,Integer等)
+```
+
+
+

@@ -575,3 +575,76 @@ git log --decorate --oneline
 git log --decorate --oneline --graph --all
 ```
 
+
+
+
+
+# 第 12 章 使用技巧
+
+## 12.1 配置代理服务器
+
+github受网络环境影响，有时经常无法访问，通过配置代理服务器可以解决。
+
+### 12.1.1 全局代理设置
+
+```
+git config --global http.proxy http://代理服务器地址:端口号
+git config --global https.proxy https://代理服务器地址:端口号
+```
+
+
+
+### 12.1.2 特定仓库代理
+
+首先进入特定仓库目录，然后运行：
+
+```
+git config http.proxy http://代理服务器地址:端口号
+git config https.proxy https://代理服务器地址:端口号
+```
+
+
+
+### 12.1.3 查看代理
+
+你可以使用以下命令来查看当前Git代理的设置：
+
+```
+git config --global --get http.proxy
+git config --global --get https.proxy
+```
+
+
+
+### 12.1.4 取消代理
+
+如果要取消代理设置，可以运行以下命令：
+
+```
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+
+### 12.1.5 使用 SOCKS
+
+SOCKS 类型，可以使用下面的语法：
+
+```
+git config --global http.proxy socks5://代理服务器地址:端口号
+git config --global https.proxy socks5://代理服务器地址:端口号
+```
+
+### 12.1.6 需要验证的代理
+
+如果代理需要用户名和密码认证，可以使用以下语法：
+
+```
+git config --global http.proxy http://用户名:密码@代理服务器地址:端口号
+git config --global https.proxy https://用户名:密码@代理服务器地址:端口号
+```
+
+请注意，在将用户名和密码包含在URL中可能会导致安全问题，尤其是在共享或公共环境中，因此请谨慎使用这种方式。
+
+
+
+ 
