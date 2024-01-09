@@ -82,6 +82,65 @@ Spring5 框架概述
 
 
 
+### 2.3、BeanFactory后处理器
+
+- ConfigurationClassPostProcessor 可以解析
+  - @ComponentScan
+  - @Bean
+  - @Import
+  - @ImportResource
+- MapperScannerConfigurer 可以解析
+  - Mapper 接口
+
+```java
+DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+// bean 的定义（class, scope, 初始化, 销毁）
+AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder
+            .genericBeanDefinition(Config.class)
+            .setScope("singleton").getBeanDefinition();
+
+beanFactory.registerBeanDefinition("config", beanDefinition);
+
+// 给 BeanFactory 添加一些常用的后处理器
+AnnotationConfigUtils.registerAnnotationConfigProcessors(beanFactory);
+
+// BeanFactory 后处理器主要功能，补充了一些 bean 定义
+beanFactory.getBeansOfType(BeanFactoryPostProcessor.class).values()
+    .forEach(beanFactoryPostProcessor -> 
+             beanFactoryPostProcessor.postProcessBeanFactory(beanFactory));
+
+@Configuration
+static class Config {
+    @Bean
+    public Bean1 bean1() {
+        return new Bean1();
+    }
+
+    @Bean
+    public Bean2 bean2() {
+        return new Bean2();
+    }
+
+    @Bean
+    public Bean3 bean3() {
+        return new Bean3();
+    }
+
+    @Bean
+    public Bean4 bean4() {
+        return new Bean4();
+    }
+}
+
+```
+
+> - @ComponentScan, @Bean, @Mapper 等注解的解析属于核心容器（即 BeanFactory）的扩展功能
+> - 这些扩展功能由不同的 BeanFactory 后处理器来完成，主要就是补充了一些 bean 定义
+
+
+
+
+
 ## 3、概念
 
 1. Bean 管理指的是两个操作
