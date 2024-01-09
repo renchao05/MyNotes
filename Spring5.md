@@ -141,19 +141,126 @@ static class Config {
 
 
 
-## 3、概念
+## 3、Bean
 
-1. Bean 管理指的是两个操作
+### 3.1、说明
 
-   （1）Spring 创建对象
+Bean 管理指的是两个操作
 
-   （2）Spirng 注入属性 
+- Spring 创建对象
 
-2. Bean 管理操作有两种方式
+- Spirng 注入属性 
 
-   （1）基于 xml 配置文件方式实现
+Bean 管理操作有两种方式
 
-   （2）基于注解方式实现
+- 基于 xml 配置文件方式实现
+
+- 基于注解方式实现
+
+### 3.2、Bean 后处理器
+
+@Autowired 等注解的解析属于 bean 生命周期阶段（依赖注入, 初始化）的扩展功能，这些扩展功能由 bean 后处理器来完成
+
+- 每个后处理器各自增强功能
+
+  - AutowiredAnnotationBeanPostProcessor 解析 @Autowired 与 @Value
+
+  * CommonAnnotationBeanPostProcessor 解析 @Resource、@PostConstruct、@PreDestroy
+  * ConfigurationPropertiesBindingPostProcessor 解析 @ConfigurationProperties
+
+- 另外 ContextAnnotationAutowireCandidateResolver 负责获取 @Value 的值，解析 @Qualifier、泛型、@Lazy 等
+
+- 模板设计模式，大流程已经固定好了，通过接口回调(bean 后处理器)扩展
+
+### 3.3、自定义Bean后处理器
+
+实现 BeanPostProcessor 接口或者其子接口
+
+```java
+public class MyBeanPostProcessor implements InstantiationAwareBeanPostProcessor, DestructionAwareBeanPostProcessor {
+
+    private static final Logger log = LoggerFactory.getLogger(com.itheima.a03.MyBeanPostProcessor.class);
+
+    @Override
+    public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException {
+        log.debug("<<<<<< 销毁之前执行, 如 @PreDestroy =======beanName::" + beanName);
+    }
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        log.debug("<<<<<< 实例化之前执行, 这里返回的对象会替换掉原本的 bean =======beanName::" + beanName);
+        return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        log.debug("<<<<<< 实例化之后执行, 这里如果返回 false 会跳过依赖注入阶段 =======beanName::" + beanName);
+        return true;
+    }
+
+    @Override
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
+        log.debug("<<<<<< 依赖注入阶段执行, 如 @Autowired、@Value、@Resource =======beanName::" + beanName);
+        return pvs;
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        log.debug("<<<<<< 初始化之前执行, 这里返回的对象会替换掉原本的 bean, 如 @PostConstruct、@ConfigurationProperties =======beanName::" + beanName);
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        log.debug("<<<<<< 初始化之后执行, 这里返回的对象会替换掉原本的 bean, 如代理增强 =======beanName::" + beanName);
+        return bean;
+    }
+}
+```
+
+
+
+### 3.4、Aware 接口
+
+常见的 `Aware` 接口：
+
+- BeanNameAware
+  - 实现此接口的Bean能够获取到它在容器中的名字。
+
+- BeanFactoryAware
+  - 实现此接口的Bean能够获取到拥有它的BeanFactory实例。
+- ApplicationContextAware
+  - 实现此接口的Bean能够获取到拥有它的ApplicationContext实例，通常用于获取Spring应用上下文中的一些资源和服务。
+- MessageSourceAware
+  - 实现此接口的Bean能够获取到拥有它的MessageSource，用于支持国际化（i18n）。
+- ApplicationEventPublisherAware
+  - 实现此接口的Bean能够获取到拥有它的ApplicationEventPublisher，用于发布应用程序事件。
+- EnvironmentAware
+  - 实现此接口的Bean能够获取到拥有它的Environment实例，用于访问环境变量和属性。
+- ResourceLoaderAware
+  - 实现此接口的Bean能够获取到拥有它的ResourceLoader，用于加载资源文件。
+- EmbeddedValueResolverAware
+  - 实现此接口的Bean能够获取到拥有它的 `StringValueResolver`，用于解析嵌入式值。
+
+> 这些 `Aware` 接口提供了一种方式，使得Bean在被实例化时能够感知和与Spring容器中的各种资源进行交互，从而实现更灵活的配置和使用方式。
+
+
+
+### 3.5、初始化与销毁
+
+初始化方法，及其执行顺序
+
+- @PostConstruct 标注的初始化方法
+- InitializingBean 接口的初始化方法
+- @Bean(initMethod) 指定的初始化方法
+
+销毁手段及其执行顺序
+
+- @PreDestroy 标注的销毁方法
+- DisposableBean 接口的销毁方法
+- @Bean(destroyMethod) 指定的销毁方法
+
+
 
 ## 4、基于 xml 方式
 
@@ -457,20 +564,31 @@ public class UserService {
 
    
 
-## 8、bean 作用域(单实例 多实例)
+## 8、bean 作用域 Scope
 
-1. 在 Spring 里面，默认情况下，bean 是单实例对象
+在当前版本的 Spring 和 Spring Boot 程序中，支持五种 Scope
 
-2. bean 标签属性（scope）设置单实例还是多实例
+* singleton
+  * 容器启动时创建（未设置延迟），容器关闭时销毁
+* prototype
+  * 每次使用时创建，不会自动销毁，需要调用 DefaultListableBeanFactory.destroyBean(bean) 销毁
+* request
+  * 每次请求用到此 bean 时创建，请求结束时销毁
+* session
+  * 每个会话用到此 bean 时创建，会话结束时销毁
+* application
+  * web 容器用到此 bean 时创建，容器停止时销毁
 
-   - 默认值，singleton，表示是单实例对象
-   - prototype，表示是多实例对象
+> 注意，如果在 singleton 注入其它 scope 都会有问题，解决方法有
+>
+> * @Lazy
+> * @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+> * ObjectFactory
+> * ApplicationContext.getBean
 
-3. singleton 和 prototype 区别
 
-   singleton：加载 spring 配置文件时候就会创建单实例对象
 
-   prototype：加载 spring 配置文件时不创建对象，调用getBean方法时才创建多实例对象
+
 
 ## 9、bean 生命周期
 
