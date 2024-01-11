@@ -2594,6 +2594,36 @@ proxy=http://<proxy-url>:<proxy-port>
 
 
 
+## 15.3 make编译安装
+
+参考nginx笔记的安装过程。这里记录一下没有root权限情况下的安装过程，以lrzsz为例。
+
+```bash
+# 软件下载
+cd /tmp
+wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz
+tar zxvf lrzsz-0.12.20.tar.gz && cd lrzsz-0.12.20
+
+# 配置安装路径
+./configure --prefix=/home/ccic/lrzsz
+
+# 编译并安装
+make && make install
+
+# 配置当前用户下的系统命令
+cd /home/ccic/lrzsz/ && mkdir bash-command && cd bash-command
+ln -s /home/ccic/lrzsz/bin/lrz rz 
+ln -s /home/ccic/lrzsz/bin/lsz sz
+
+# 配置当前用户的环境变量
+# 在 ~/.bash_profile文件中，在PATH目录后面追加字符串“:/disk/zhang/bash-command/”
+source .bash_profile
+```
+
+
+
+
+
 
 
 # ===定制篇===
