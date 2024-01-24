@@ -257,6 +257,13 @@ GitHub 网址：[https://github.com/](https://github.com/)
 ![image.png](image/Git/1649428923847-af373ba1-4fdb-44bf-85fd-2f1dc419e960.png)
 6.  如果代码没有问题，可以点击 Merge pull reque 合并代码。  ![image.png](image/Git/1649428968792-69ed9357-49ef-4f4c-8a25-ebf3ba0f18fd.png)
 ## 6.4 SSH 免密登录
+
+> GitHub 22端口连接超时解决
+>
+> [通过 HTTPS 端口使用 SSH - GitHub 文档](https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port)
+
+
+
  远程仓库中还有一个 SSH 的地址，因此我们也可以使用 SSH 进行访问。  
 ![image.png](image/Git/1649429102625-2d373652-e608-4d71-ba81-cac7a08253fb.png)
 
@@ -268,6 +275,8 @@ GitHub 网址：[https://github.com/](https://github.com/)
 -  登录 GitHub，点击用户头像→Settings→SSH and GPG keys
 ![image.png](image/Git/1649429511827-2cbb79e8-90bb-4e76-9c6d-3c52be47c6b5.png)
 - 接下来再往远程仓库 push 的时候使用 SSH 连接就不需要登录了。
+
+
 
 # 第 7 章 IDEA 集成 Git
 ## 7.1 配置 Git 忽略文件
