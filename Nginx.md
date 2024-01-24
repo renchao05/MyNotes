@@ -587,3 +587,184 @@ if ($invalid_referer) {
 ## 11.2、方式二：vts工具监控
 
 参考博客
+
+
+
+
+
+# 第 12 章 SSL证书配置
+
+## 12.1、acme.sh申请证书
+
+[Blogs and tutorials · acmesh-official/acme.sh Wiki (github.com)](https://github.com/acmesh-official/acme.sh/wiki/Blogs-and-tutorials#中文)
+
+[使用 acme.sh 配置自动续签 SSL 证书 - 烧饼博客 (u.sb)](https://u.sb/acme-sh-ssl/)
+
+[使用ACME申请证书（证书自动续期） | 老潘的博客 (panyanbin.com)](https://www.panyanbin.com/article/c44653d8.html)
+
+### 12.1.1、安装
+
+```bash
+curl  https://get.acme.sh | sh
+```
+
+安装程序会自动做以下操作：
+
+- 自动把 acme.sh 安装到你的 **home** 的`.acme.sh`目录下，即`~/.acme.sh/`
+- 自动创建一个 bash 的 alias, 方便你的使用: `alias acme.sh=~/.acme.sh/acme.sh`
+- 自动创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.
+
+### 12.1.2、更改默认证书
+
+```bash
+acme.sh --set-default-ca  --server  letsencrypt
+```
+
+acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，因此更换为letsencrypt。
+
+当然，也可以在生成证书时加一个`--server`参数来决定生成什么证书
+
+```bash
+--server letsencrypt
+```
+
+### 12.1.3、http验证生成
+
+使用`acme.sh --issue`命令生成证书，但生成证书的同时会进行域名的所有权的验证。 
+
+> 注意：如果需要生成泛域名（`*.a.com`）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式
+
+http方式可以通过下面方式来验证你的域名所有权来完成验证。
+
+- 配置网站根目录，命令参数为（`--webroot /home/wwwroot/mydomain.com/`）
+- 关联服务器的**nginx**服务，命令参数为（`--nginx`）
+- 关联服务器的**apache**服务，命令参数为（`--apache`）
+- 自建虚拟webserver（服务器没有占用80端口），命令参数为（`--standalone`）
+
+```bash
+# 如已搭建nginx服务，关联即可，apache同理
+acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx
+# --issue 命令参数生成证书
+# -d 定义需要生成证书的域名，可以多个，以上定了三个域名
+# 域名需要配置到nginx中，如  server_name  file.a.com www.a.com img.a.com;
+
+# 自建虚拟webserver
+acme.sh --issue -d v2ray.renchao05.top --standalone
+```
+
+
+
+### 12.1.4、dns验证生成
+
+需要在域名上添加一条 txt 解析记录, 验证域名所有权
+
+#### 方式1：手动添加记录
+
+a. 生成txt解析内容
+
+```bash
+acme.sh  --issue  --dns -d mydomain.com \
+ --yes-I-know-dns-manual-mode-enough-go-ahead-please
+```
+
+> 以上mydomain.com只是测试域名，如果多个域名，则需多次使用-d配置，如`-d www.a.com -d img.a.com`
+
+b. 把txt解析添加到域名管理面板中
+
+c. 重新生成证书
+
+```bash
+acme.sh  --renew   -d mydomain.com \
+  --yes-I-know-dns-manual-mode-enough-go-ahead-please
+```
+
+> 注意，重新生成使用的是`renew`参数，把生成txt解析内容命令的`issue`改为`renew`
+
+
+
+
+
+### 12.1.5、copy/安装 证书
+
+默认生成的证书都放在安装目录下: `~/.acme.sh/`，但是不要在web服务器中直接引用目录下的证书文件，也不要手动来拷贝证书文件到具体的web服务器中，手动拷贝会导致之后更新证书流程不能完全自动。
+
+正确方式是使用acme.sh的安装证书命令，acme.sh自动拷贝证书文件到具体目录中，拷贝命令会被记录下来，之后自动更新证书流程也会执行此拷贝步骤，从而实现更新证书流程的完全自动化。
+
+```bash
+acme.sh --install-cert -d example.com \
+--key-file       /etc/nginx/ssl/example.com.key  \
+--fullchain-file /etc/nginx/ssl/example.com.crt \
+--ca-file        /etc/nginx/ssl/example.com.ca.crt \
+--reloadcmd     "systemctl restart nginx"
+
+#  Nginx 配置指定证书文件
+ssl_certificate /etc/nginx/ssl/example.com.crt;
+ssl_certificate_key /etc/nginx/ssl/example.com.key;
+ssl_trusted_certificate /etc/nginx/ssl/example.com.ca.crt;
+```
+
+
+
+### 12.1.6、更新证书
+
+证书在快到期后会自动更新，无需任何操作，因为在acme.sh安装时，已经把相关的自动更新程序写入到crontab中，如果想要查看，可以通过以下命令：
+
+```bash
+crontab -l
+```
+
+输出内容包含一个自动更新程序，大致内容如下：
+
+```bash
+56 * * * * "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" > /dev/null
+```
+
+#### 停止自动更新（移除域名证书）
+
+```bash
+acme.sh --remove -d example.com 
+```
+
+或者手动在`~/.acme.sh/`目录下删除对应的域名目录，如`~/.acme.sh/a.com`。
+
+### 12.1.6、升级ACME
+
+```bash
+acme.sh --upgrade
+
+# 开启自动更新
+acme.sh --upgrade --auto-upgrade
+```
+
+### 12.1.7、出错debug
+
+执行错误，可以查看日志，或者执行命令添加`--debug 2`参数，开启debug模式
+
+```
+acme.sh --issue  .....  --debug 2
+```
+
+
+
+## 12.2、nginx配置
+
+```bash
+    server {
+        listen       80;
+        listen       [::]:80;
+        server_name  test.renchao05.top;
+        location / {
+            rewrite	^/(.*)$ https://$host/$1 permanent;
+        }
+    }
+
+    server {
+        listen       443 ssl;
+        server_name  test.renchao05.top;
+        root         /usr/share/nginx/html;
+        ssl_certificate /etc/nginx/key/test.renchao05.top.crt;
+        ssl_certificate_key /etc/nginx/key/test.renchao05.top.key;
+        ssl_trusted_certificate /etc/nginx/key/test.renchao05.top.ca.crt;
+    }
+```
+
