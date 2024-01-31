@@ -446,17 +446,17 @@ public class HelloApp {
 
 #### clinit()
 
-1. 初始化阶段就是执行类构造器方法<clinit>()的过程
+1. 初始化阶段就是执行类构造器方法`<clinit>()`的过程
 2. 此方法不需定义，是javac编译器自动收集类中的所有**类变量**的赋值动作和静态代码块中的语句合并而来。也就是说，当我们代码中包含static变量的时候，就会有clinit方法
-3. <clinit>()方法中的指令按语句在源文件中出现的顺序执行
-4. <clinit>()不同于类的构造器。（关联：构造器是虚拟机视角下的<init>()）
-5. 若该类具有父类，JVM会保证子类的<clinit>()执行前，父类的<clinit>()已经执行完毕
-6. 虚拟机必须保证一个类的<clinit>()方法在多线程下被同步加锁
+3. `<clinit>()`方法中的指令按语句在源文件中出现的顺序执行
+4. `<clinit>()`不同于类的构造器。（关联：构造器是虚拟机视角下的`<init>()`）
+5. 若该类具有父类，JVM会保证子类的`<clinit>()`执行前，父类的`<clinit>()`已经执行完毕
+6. 虚拟机必须保证一个类的`<clinit>()`方法在多线程下被同步加锁
 > IDEA 中安装 JClassLib Bytecode viewer 插件，可以很方便的看字节码。安装过程可以自行百度
 
 #### 案例
 **举例1：有static变量**
-查看下面这个代码的字节码，可以发现有一个<clinit>()方法。
+查看下面这个代码的字节码，可以发现有一个`<clinit>()`方法。
 ![](image/1663809172768-04dee99f-1879-4680-893a-2747ee644cc6.png)
 > 当我们代码中包含static变量的时候，就会有clinit方法
 
@@ -475,7 +475,7 @@ public class HelloApp {
 
 
 案例4：
-若该类具有父类，JVM会保证子类的<clinit>()执行前，父类的<clinit>()已经执行完毕
+若该类具有父类，JVM会保证子类的`<clinit>()`执行前，父类的`<clinit>()`已经执行完毕
 ![](image/1663809182292-8a26bf5e-62dd-4f5b-8be7-63c238965974.png)
 如上代码，加载流程如下：
 
@@ -484,7 +484,7 @@ public class HelloApp {
 - Son 类的父类是 Father 类，所以需要先执行 Father 类的加载，再执行 Son 类的加载
 
 案例5：
-虚拟机必须保证一个类的<clinit>()方法在多线程下被同步加锁
+虚拟机必须保证一个类的`<clinit>()`方法在多线程下被同步加锁
 ```java
 public class DeadThreadTest {
     public static void main(String[] args) {
@@ -1375,7 +1375,7 @@ invokespecial 体现为早期绑定
 
 - **普通指令：**
 1. invokestatic：调用静态方法，解析阶段确定唯一方法版本
-2. invokespecial：调用<init>方法、私有及父类方法，解析阶段确定唯一方法版本
+2. invokespecial：调用`<init>`方法、私有及父类方法，解析阶段确定唯一方法版本
 3. invokevirtual：调用所有虚方法
 4. invokeinterface：调用接口方法
 - **动态调用指令**
@@ -2960,6 +2960,7 @@ SourceFile: "MethodAreaDemo.java"
 
 1. 首先明确：只有Hotspot才有永久代。BEA JRockit、IBMJ9等来说，是不存在永久代的概念的。原则上如何实现方法区属于虚拟机实现细节，不受《Java虚拟机规范》管束，并不要求统一
 2. Hotspot中方法区的变化：
+
 | **JDK1.6及以前** | **有永久代（permanent generation），静态变量存储在永久代上** |
 | ---------------- | ------------------------------------------------------------ |
 | JDK1.7           | 有永久代，但已经逐步 “去永久代”，**字符串常量池，静态变量移除，保存在堆中** |
@@ -4242,8 +4243,8 @@ public class StringNewTest {
 9 astore_1
 10 return
 ```
-> 0 new #2 <java/lang/String>：在堆中创建了一个 String 对象
-> 4 ldc #3 <ab> ：在字符串常量池中放入 “ab”（如果之前字符串常量池中没有 “ab” 的话）
+> `0 new #2 <java/lang/String>`：在堆中创建了一个 String 对象
+> `4 ldc #3 <ab> `：在字符串常量池中放入 “ab”（如果之前字符串常量池中没有 “ab” 的话）
 
 **new String(“a”) + new String(“b”) 会创建几个对象？**
 代码

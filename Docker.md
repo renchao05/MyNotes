@@ -220,7 +220,7 @@ docker images | grep '5000/mall.*\b0\.0\.1\b' | awk '{print $3}' | xargs docker 
 
 
 > docker虚悬镜像dangling image：
-> 仓库名、标签都是<none>的镜像，俗称虚悬镜像。
+> 仓库名、标签都是`<none>`的镜像，俗称虚悬镜像。
 >
 > 查看所有虚悬镜像：docker images -f "dangling=true"
 >
@@ -1053,7 +1053,7 @@ CMD /bin/bash
    - 注意：TAG后面有个空格，有个点；镜像名不能有大写字母。
    - 例如：`docker build -t centos:7.6_Java .`
 ## 5、虚悬镜像
-仓库名、标签都是<none>的镜像，俗称虚悬镜像（dangling image）。
+仓库名、标签都是`<none>`的镜像，俗称虚悬镜像（dangling image）。
 Dockerfile写一个
 ```bash
 FROM scratch	# 构建基础镜像时使用
