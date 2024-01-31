@@ -3190,11 +3190,11 @@ $("#areaDiv").bind("mouseover mouseout",function (event) {
 ```
 ## 12、a 标签请求POST
 
-- 定义一<a>标签，href属性定义请求地址；
-- 定义一个<form>，用于转换为 post/delete/put 等请求；
-- 通过 js (jQuery)动态获取<a>标签，动态绑定点击事件，将<a>标签的href请求地址赋给动态获取的 <form>的"action"属性上，并动态提交表单；
+- 定义一`<a>`标签，href属性定义请求地址；
+- 定义一个`<form>`，用于转换为 post/delete/put 等请求；
+- 通过 js (jQuery)动态获取`<a>`标签，动态绑定点击事件，将`<a>`标签的href请求地址赋给动态获取的 `<form>`的"action"属性上，并动态提交表单；
 
-【注】：动态绑定的<a>的点击事件需返回 false，以阻止<a>的默认点击事件。
+【注】：动态绑定的`<a>`的点击事件需返回 false，以阻止`<a>`的默认点击事件。
 ```html
 <script type="text/javascript" src="scripts/jquery-1.9.1.min.js"></script>
 <script type="text/javascript">
@@ -5766,10 +5766,10 @@ OGNL：Object-Graph Navigation Language对象-图 导航语言
    - application
 - param
 - 内置对象
-   - #request
-   - #session
-   - #lists
-   - #strings
+   - `#request`
+   - `#session`
+   - `#lists`
+   - `#strings`
 #### ②属性访问语法
 
 - 访问对象属性：使用getXxx()、setXxx()方法定义的属性

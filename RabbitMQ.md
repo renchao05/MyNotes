@@ -1504,7 +1504,7 @@ public class ConfirmConsumer {
 ### 1.8、结果分析
 发送 `http://localhost:8080/sendMessage/测试发布确认`
 ![image.png](image/1654306981475-28036bc5-027b-4a5d-98f6-cf3f3b5d9bd9.png)
-> 交换机还未收到id为22的消息:测试发布确认，原因是：channel error; protocol method: #method<channel.close>(reply-code=404, reply-text=NOT_FOUND - no exchange 'confirm_exchange123' in vhost '/', class-id=60, method-id=40)
+> 交换机还未收到id为22的消息:测试发布确认，原因是：`channel error; protocol method: #method<channel.close>(reply-code=404, reply-text=NOT_FOUND - no exchange 'confirm_exchange123' in vhost '/', class-id=60, method-id=40)`
 
 因为 id 为 22 的消息发送的交换机是 confirm_exchange123 但没有这个交换机，所以发送失败。
 ## 2、无法路由故障
@@ -1561,30 +1561,29 @@ public class Producer {
 }
 ```
 > 也可以使用下面方法注入回调接口
->
-> ```java
-> @Configuration
-> public class MyRabbitMQConfig {
-> 
->     @Autowired
->     private MyReturnsCallback myReturnsCallback;
->     @Autowired
->     private RabbitTemplate rabbitTemplate;
-> 
->     @Bean
->     public MessageConverter messageConverter() {
->         return new Jackson2JsonMessageConverter();
->     }
-> 
->     /**
->      * 注入 ConfirmCallback 回调接口
->      */
->     @PostConstruct
->     public void initRabbitTemplate() {
->         rabbitTemplate.setReturnCallback(myReturnsCallback);
->     }
-> }
-> ```
+```java
+@Configuration
+public class MyRabbitMQConfig {
+
+    @Autowired
+    private MyReturnsCallback myReturnsCallback;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Bean
+    public MessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    /**
+     * 注入 ConfirmCallback 回调接口
+     */
+    @PostConstruct
+    public void initRabbitTemplate() {
+        rabbitTemplate.setReturnCallback(myReturnsCallback);
+    }
+}
+```
 
 
 

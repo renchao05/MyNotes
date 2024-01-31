@@ -1,4 +1,4 @@
-[10分钟讲清楚Java SLF4J，Java日志框架的扛把子，从原理到实践 #安员外很有码_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1aS4y1Y7iP)
+[10分钟讲清楚Java SLF4J，Java日志框架的扛把子，从原理到实践](https://www.bilibili.com/video/BV1aS4y1Y7iP)
 
 # 日志框架介绍
 

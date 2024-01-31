@@ -1262,7 +1262,7 @@ SourceFile: "DynamicLinkingTest.java"
    - #8 = Class #32 ：去找 #32
    - #32 = Utf8 com/atguigu/java1/DynamicLinkingTest
    - 结论：通过 #8 我们找到了 DynamicLinkingTest 这个类
-- 再来找 #31：
+- 再来找#31：
    - #31 = NameAndType #19:#13 ：去找 #19 和 #13
    - #19 = Utf8 methodA ：方法名为 methodA
    - #13 = Utf8 ()V ：方法没有形参，返回值为 void
