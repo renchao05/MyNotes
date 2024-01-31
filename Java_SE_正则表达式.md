@@ -67,6 +67,7 @@ public void test01() {
 - **匹配字符集是预定义的用于正则表达式中的符号集。**
 - **如果字符串与字符集中的任何一个字符相匹配，它就会找到这个匹配项。**
 - **部分匹配字符集：**
+
 | **符号** | **含义**                                 | **示例**     | **解释**                                                     | **匹配输入**           | **不匹配输入**  |
 | -------- | ---------------------------------------- | ------------ | ------------------------------------------------------------ | ---------------------- | --------------- |
 | `.`      | 匹配除 \\n以外的任何字符                 | a..b         | 以a开头，b结尾，中间包括2个任意字符的长度为4的字符串         | aaab、aefb、a35b、a#*b | ab、aaaa、a347b |
@@ -81,15 +82,14 @@ public void test01() {
 我们可以用圆括号组成一个比较复杂的匹配模式，那么一个圆括号的部分我们可以看作是一个子表达式/一个分组。
 - **捕获**
 把正则表达式中子表达式/分组匹配的内容，保存到内存中以数字编号或显式命名的组里，方便后面引用，从左向右，以分组的左括号为标志，第一个出现的分组的组号为1,第二个为2,以此类推。组0代表的是整个正则式。
-| **分组构造**                                                 | **说明**                                                     |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `(pattern)`                                                  | 非命名捕获。捕获匹配的子字符串（或非捕获组）。编号为零的第一个捕获是由整个正则表达式模式匹配的文本，其它捕获结果则根据左括号的顺序从1开始自动编号。 |
-| `(?<name>pattern)`                                           | 命名捕获。将匹配的子字符串捕获到一个组名称或编号名称中。也可以用单引号替代尖括号，例如 (?'name') |
-| `(?:pattern)`                                                | 匹配 pattern 但不捕获该匹配的子表达式，即它是一个非捕获匹配， 不存储供以后使用的匹配。这对于用"or"字符()组合模式部件的情况很有用。例如，'`industr(?:y&#124;ies)` 是比`industry&#124;industries`'更经济的表达式。 |
-| `(?=pattern)`                                                | 它是一个非捕获匹配。例如，'Windows (? =95&#124;98&#124;NT]2000)'四配"Windows 2000"中的"Windows"， |
-| 但不匹配"Windows 3.1"中的"Windows"。                         |                                                              |
-| `(?!pattern)`                                                | 该表达式匹配不处于匹配pattern的字符串的起始点的搜索字符串。它是一个非捕获匹配。 |
-| 例如，Windows (?I95&#124;98&#124;NT&#124;2000)匹配"Windows 3.1"中的"Windows"，但不匹配"Windows 2000"中的"Windows"。 |                                                              |
+
+| **分组构造**       | **说明**                                                     |
+| ------------------ | ------------------------------------------------------------ |
+| `(pattern)`        | 非命名捕获。捕获匹配的子字符串（或非捕获组）。编号为零的第一个捕获是由整个正则表达式模式匹配的文本，其它捕获结果则根据左括号的顺序从1开始自动编号。 |
+| `(?<name>pattern)` | 命名捕获。将匹配的子字符串捕获到一个组名称或编号名称中。也可以用单引号替代尖括号，例如 (?'name') |
+| `(?:pattern)`      | 匹配 pattern 但不捕获该匹配的子表达式，即它是一个非捕获匹配， 不存储供以后使用的匹配。这对于用"or"字符()组合模式部件的情况很有用。例如，'`industr(?:y&#124;ies)` 是比`industry&#124;industries`'更经济的表达式。 |
+| `(?=pattern)`      | 它是一个非捕获匹配。例如，'Windows (? =95&#124;98&#124;NT]2000)'四配"Windows 2000"中的"Windows"，但不匹配"Windows 3.1"中的"Windows"。 |
+| `(?!pattern)`      | 该表达式匹配不处于匹配pattern的字符串的起始点的搜索字符串。它是一个非捕获匹配。例如，Windows (?I95&#124;98&#124;NT&#124;2000)匹配"Windows 3.1"中的"Windows"，但不匹配"Windows 2000"中的"Windows"。 |
 
 ## 27.2.6 反向引用
 圆括号的内容被捕获后，可以在这个括号后被使用，从而写出一个比较实用的匹配模式，这个我们称为反向引用，这种引用既可以是在正则表达式内部，也可以是在正则表达式外部，内部反向引用`\`分组号，外部反向引用`$`分组号。
@@ -155,6 +155,7 @@ public void test01() {
 ## 27.3.1 Pattern
 
 - 方法
+
 | **Modifier and Type** | **Method and Description**                                   |
 | --------------------- | ------------------------------------------------------------ |
 | Predicate<String>     | asPredicate() 创建可用于匹配字符串的谓词。                   |
@@ -190,20 +191,19 @@ public class PatternMethod {
 ## 27.3.2 Matcher
 
 - 方法
+
 | **Modifier and Type** | **Method and Description**                                   |
 | --------------------- | ------------------------------------------------------------ |
 | Matcher               | appendReplacement(StringBuffer sb, String replacement) 实施非终端附加和替换步骤。 |
 | StringBuffer          | appendTail(StringBuffer sb) 实施终端附加和替换步骤。         |
 | int                   | end() 返回最后一个字符匹配后的偏移量。                       |
 | int                   | end(int group) 返回在上次匹配操作期间由给定组捕获的子序列的最后一个字符之后的偏移量。 |
-| int                   | end(String name) 返回给定捕获子序列的最后一个字符之后的偏移量 named-capturing group |
-| 以前的匹配操作期间。  |                                                              |
+| int                   | end(String name) 返回给定捕获子序列的最后一个字符之后的偏移量 named-capturing group以前的匹配操作期间。 |
 | boolean               | find() 尝试找到匹配模式的输入序列的下一个子序列。            |
 | boolean               | find(int start) 重新设置该匹配器，然后尝试从指定的索引开始找到匹配模式的输入序列的下一个子序列。 |
 | String                | group() 返回与上一个匹配匹配的输入子序列。                   |
 | String                | group(int group) 返回在上一次匹配操作期间由给定组捕获的输入子序列。 |
-| String                | group(String name) 返回给定捕获的输入子序列 named-capturing  group |
-| 以前的匹配操作期间。  |                                                              |
+| String                | group(String name) 返回给定捕获的输入子序列 named-capturing  group以前的匹配操作期间。 |
 | int                   | groupCount() 返回此匹配器模式中捕获组的数量。                |
 | boolean               | hasAnchoringBounds() 查询该匹配器的区域边界的锚定。          |
 | boolean               | hasTransparentBounds() 查询此匹配器的区域边界的透明度。      |
@@ -222,10 +222,8 @@ public class PatternMethod {
 | Matcher               | reset(CharSequence input) 使用新的输入序列重置此匹配器。     |
 | int                   | start() 返回上一个匹配的起始索引。                           |
 | int                   | start(int group) 返回给定组在上一个匹配操作期间捕获的子序列的开始索引。 |
-| int                   | start(String name) 返回给定捕获的子序列的初始索引 [named-capturing group](Pattern.html#groupname) |
-| 以前的匹配操作期间。  |                                                              |
-| MatchResult           | toMatchResult() 返回此匹配器的匹配状态为[MatchResult](../../../java/util/regex/MatchResult.html) |
-| 。                    |                                                              |
+| int                   | start(String name) 返回给定捕获的子序列的初始索引 [named-capturing group](Pattern.html#groupname)以前的匹配操作期间。 |
+| MatchResult           | toMatchResult() 返回此匹配器的匹配状态为[MatchResult](../../../java/util/regex/MatchResult.html)。 |
 | String                | toString() 返回此匹配器的字符串表示形式。                    |
 | Matcher               | useAnchoringBounds(boolean b) 设置该匹配器的区域边界的锚定。 |
 | Matcher               | usePattern(Pattern newPattern) 更改，这 Matcher用于查找与匹配的 Pattern。 |
