@@ -5,6 +5,8 @@
 ## CMD中javac中文乱码
 
 右键“我的电脑”-->点击“属性”-->点击”高级系统设置”-->“点击环境变量”-->在系统变量中新建一个系统变量-->编辑环境变量名为JAVA_TOOL_OPTIONS-->编辑环境变量值为-Dfile.encoding=UTF-8
+>也可以直接在当前会话中设置：`set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8`
+>这样仅在当前 CMD 会话中有效，推荐这样做，不会影响系统的其他环境。
 
 
 
