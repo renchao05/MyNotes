@@ -1,5 +1,6 @@
 {
   "strictLineBreaks": false,
   "attachmentFolderPath": "./image",
-  "defaultViewMode": "preview"
+  "defaultViewMode": "preview",
+  "useMarkdownLinks": true
 }
