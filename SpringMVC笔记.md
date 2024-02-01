@@ -2248,3 +2248,23 @@ d) 数据验证： 验证数据的有效性（长度、格式等），验证结�
         }
 ```
 
+
+# 十五、源码笔记
+
+## 1、请求流程
+
+1. 根据请求路径从HandlerMapping中获取HandlerMethod，并包装成HandlerExecutionChain。
+   - HandlerMapping有多个，依次查找，返回排在前面的符合要求的。
+   - HandlerMapping的优先级可以通过实现Ordered接口进行自定义。
+   - HandlerExecutionChain中包含HandlerMethod和拦截器。
+2. 根据HandlerMethod获取HandlerAdapter。
+   - HandlerAdapter与HandlerMapping一般是成对出现的，这是为了使其他框架HandlerMethod能够与此框架集成。
+3. 调用拦截器preHandle方法。
+4. 通过HandlerAdapter调用HandlerMethod。
+   - 通过HandlerMethod的子类ServletInvocableHandlerMethod调用最终的Controller方法。
+   - 参数解析，返回值解析都是由ServletInvocableHandlerMethod完成的，最终返回ModelAndView。
+   - 参数解析器和返回值解析器都是HandlerAdapter在创建ServletInvocableHandlerMethod时设置的。
+5. 调用拦截器postHandle方法。
+6. 处理调度结果
+   - 如何返回的有ModelAndView，会渲染视图。
+   - 调用拦截器afterCompletion方法。
