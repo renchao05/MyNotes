@@ -1579,6 +1579,8 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 ## 1、过滤器执行流程
 
+### 1.1、执行流程
+
 1. **DelegatingFilterProxy:** 主要作用是将 Servlet 过滤器的调用委派给 Spring 容器中的目标过滤器，对于 Spring Security 来说，它主要是将请求传递给 `FilterChainProxy`。
     
 2. **FilterChainProxy:** 是 Spring Security 的核心过滤器。它管理一组 `DefaultSecurityFilterChain`，每个链对应一个特定的请求路径模式。每个 `DefaultSecurityFilterChain` 由一组过滤器和一个请求匹配器 `RequestMatcher` 组成。
@@ -1596,6 +1598,49 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter {
 - 如果匹配成功，`FilterChainProxy` 获取匹配到的过滤器链并交给 `VirtualFilterChain` 执行。
 - `VirtualFilterChain` 按顺序执行过滤器链中的每个过滤器。
 
+### 1.2、过滤器功能说明
+
+1. **WebAsyncManagerIntegrationFilter:**
+    - 将 Spring Security 的 `SecurityContext` 集成到 Spring 的 WebAsyncManager 中，以确保在异步请求的不同阶段仍然可以访问到安全上下文。
+        
+2. **SecurityContextPersistenceFilter:**
+    - 负责将 `SecurityContext` 在请求之间进行持久化，通常是通过 `SecurityContextRepository` 实现。确保在同一用户会话中的多个请求之间共享安全上下文。
+        
+3. **HeaderWriterFilter:**
+    - 通过应用配置的 `HeaderWriter` 来添加安全相关的 HTTP 头部，如 Content-Security-Policy、Strict-Transport-Security 等，以增强应用程序的安全性。
+        
+4. **CsrfFilter:**
+    - 实施跨站请求伪造（CSRF）防护。验证请求中的 CSRF 令牌，防止恶意站点通过伪造请求来执行未经授权的操作。
+        
+5. **LogoutFilter:**
+    - 处理注销操作。清除认证信息，执行注销成功后的操作，并重定向到指定的注销成功页面。
+        
+6. **UsernamePasswordAuthenticationFilter:**
+    - 处理基于用户名密码的身份验证请求。通常与表单登录一起使用，负责验证用户提供的用户名和密码，并生成认证信息。
+        
+7. **DefaultLoginPageGeneratingFilter:**
+    - 生成默认的登录页面，当用户未经身份验证时自动重定向到该页面。提供简单的用户名密码输入框、登录按钮等。
+        
+8. **DefaultLogoutPageGeneratingFilter:**
+    - 生成默认的注销页面，提供简单的注销确认页面，显示注销按钮和相关信息。
+        
+9. **RequestCacheAwareFilter:**
+    - 负责在重定向到登录页面前将当前请求保存在 `RequestCache` 中，以便在用户完成身份验证后重新导航回原始请求。
+        
+10. **SecurityContextHolderAwareRequestFilter:**
+    - 确保 `SecurityContextHolder` 中的安全上下文在请求处理期间对 `HttpServletRequest` 对象的包装保持一致，以便在应用程序中的其他组件中可以轻松访问安全上下文。
+        
+11. **AnonymousAuthenticationFilter:**
+    - 在用户未经身份验证时，自动创建并添加匿名身份验证信息。这样可以确保在没有明确身份验证的情况下，应用程序仍然可以访问某些资源。
+        
+12. **SessionManagementFilter:**
+    - 管理用户会话，可以处理会话并发控制、会话超时等策略，以及在需要时进行会话固定保护。
+        
+13. **ExceptionTranslationFilter:**
+    - 捕获 `AccessDeniedException` 和 `AuthenticationException` 异常，根据配置的 `AuthenticationEntryPoint` 和 `AccessDeniedHandler` 进行适当的处理。
+        
+14. **FilterSecurityInterceptor:**
+    - 基于访问决策管理请求的访问权限。通过配置的 `AccessDecisionManager` 进行访问决策，并在必要时执行访问控制。
 ## 2、认证流程
 
 ![img](image/SpringSecurity/a2e3ffa6d9052a8ecace632691fe25a4.png)
