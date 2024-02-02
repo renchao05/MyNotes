@@ -3662,6 +3662,7 @@ public void init(ServletConfig config) throws ServletException {
 
 - 域对象，是可以像 Map 一样存取数据的对象，叫域对象。
 - 域指的是存取数据的操作范围，ServletContext是整个 web 工程。
+
 | **对象** | **存数据**     | **取数据**     | **删除数据**       |
 | -------- | -------------- | -------------- | ------------------ |
 | Map      | put()          | get()          | remove()           |
@@ -3948,6 +3949,7 @@ href 属性就是参数的地址值
 在 javaWeb 中，路径分为相对路径和绝对路径两种：
 
 - **相对路径**
+
 | **路径** | **说明**            |
 | -------- | ------------------- |
 | .        | 表示当前目录        |
@@ -4032,6 +4034,7 @@ resp.sendRedirect("http://localhost:8080");
 1. Listener 监听器它是 JavaWeb 的三大组件之一。
 1. Listener 它是 JavaEE 的规范，就是接口。
 1. 监听器的作用是，监听某种事物的变化。然后通过回调函数，反馈给客户（程序）去做一些相应的处理。
+
 | **序号** | **监听器**                      | **说明**                                                 |
 | -------- | ------------------------------- | -------------------------------------------------------- |
 | 1        | **ServletContextListener**      | 监听ServletContext对象的创建和销毁的过程                 |
@@ -4607,11 +4610,7 @@ EL 个达式中 11 个隐含对象，是 EL 表达式中自己定义的，可以
 |      | **变量**    | **类型**        | **作用**                  |
 | ---- | ----------- | --------------- | ------------------------- |
 |      | pageContext | PageContextImpl | 获取 jsp 中的九大内置对象 |
-| 
-
-域
-对
-象 | pageScope | Map<String,Object> | 获取 pageContext 域中的数据 |
+| 域对象| pageScope | Map<String,Object> | 获取 pageContext 域中的数据 |
 |  | requestScope | Map<String,Object> | 获取 Request 域中的数据 |
 |  | sessionScope | Map<String,Object> | 获取 Session 域中的数据 |
 |  | applicationScope | Map<String,Object> | 获取 ServletContext 域中的数据 |
