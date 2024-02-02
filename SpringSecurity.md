@@ -1577,7 +1577,26 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 # 第 5 节 原理总结
 
-## 1、认证流程
+## 1、过滤器执行流程
+
+1. **DelegatingFilterProxy:** 主要作用是将 Servlet 过滤器的调用委派给 Spring 容器中的目标过滤器，对于 Spring Security 来说，它主要是将请求传递给 `FilterChainProxy`。
+    
+2. **FilterChainProxy:** 是 Spring Security 的核心过滤器。它管理一组 `DefaultSecurityFilterChain`，每个链对应一个特定的请求路径模式。每个 `DefaultSecurityFilterChain` 由一组过滤器和一个请求匹配器 `RequestMatcher` 组成。
+    - 请求到达时，`FilterChainProxy` 会遍历所有配置的 `DefaultSecurityFilterChain`，通过请求的路径和匹配器 `RequestMatcher` 进行匹配。
+    - 如果匹配成功，`FilterChainProxy` 会获取匹配到的 `DefaultSecurityFilterChain` 中的过滤器链（`List<Filter>`）。
+    - 将请求传递给 `VirtualFilterChain`，由该链按顺序执行过滤器。
+        
+3. **VirtualFilterChain:** `VirtualFilterChain` 是 `FilterChainProxy` 中用于执行过滤器链的类。它负责按顺序执行 `DefaultSecurityFilterChain` 中的过滤器。
+    
+
+综合来说，整个过程可以概括为：
+- 请求通过 `DelegatingFilterProxy` 进入 Spring Security。
+- `DelegatingFilterProxy` 将请求传递给 `FilterChainProxy`。
+- `FilterChainProxy` 遍历所有 `DefaultSecurityFilterChain`，找到匹配的链。
+- 如果匹配成功，`FilterChainProxy` 获取匹配到的过滤器链并交给 `VirtualFilterChain` 执行。
+- `VirtualFilterChain` 按顺序执行过滤器链中的每个过滤器。
+
+## 2、认证流程
 
 ![img](image/SpringSecurity/a2e3ffa6d9052a8ecace632691fe25a4.png)
 
@@ -1585,7 +1604,7 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
-### 1.1、登录信息存入session
+### 2.1、登录信息存入session
 
 https://www.cnblogs.com/summerday152/p/13636285.html
 
@@ -1598,7 +1617,7 @@ https://www.cnblogs.com/summerday152/p/13636285.html
 
 > 由SecurityContextPersistenceFilter过滤器存入session。过滤器有个属性repo是SecurityContextRepository接口，通过这个接口把SecurityContext从session取出或保存的。
 
-### 1.2、SecurityContextHolder与session的关系
+### 2.2、SecurityContextHolder与session的关系
 
 SecurityContextHolder可以从session中获取或设置SecurityContext对象，也可以从session中清除SecurityContext对象。
 
