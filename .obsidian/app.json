@@ -2,5 +2,6 @@
   "strictLineBreaks": true,
   "attachmentFolderPath": "./image",
   "defaultViewMode": "preview",
-  "useMarkdownLinks": true
+  "useMarkdownLinks": true,
+  "newLinkFormat": "relative"
 }
