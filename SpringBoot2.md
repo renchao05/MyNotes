@@ -3102,7 +3102,17 @@ public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySourc
   }
   ```
 
+整体流程
 
+![](image/Pasted%20image%2020240206152641.png)
+
+准备环境
+
+![](image/Pasted%20image%2020240206153529.png)
+
+准备容器
+
+![](image/Pasted%20image%2020240206154249.png)
 
 # 九、框架组件
 
