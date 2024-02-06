@@ -3065,7 +3065,9 @@ public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySourc
   	DefaultBootstrapContext bootstrapContext = createBootstrapContext();	//创建引导上下文（Context环境）
   	ConfigurableApplicationContext context = null;	//可配置的应用程序上下文
   	configureHeadlessProperty();	//让当前应用进入headless模式。java.awt.headless
-  	SpringApplicationRunListeners listeners = getRunListeners(args);	//  获取所有 RunListener（运行监听器）
+  	//  获取所有 RunListener（运行监听器）实际上就是事件发布器
+  	//  通过SimpleApplicationEventMulticaster发布事件
+  	SpringApplicationRunListeners listeners = getRunListeners(args);
   	listeners.starting(bootstrapContext, this.mainApplicationClass);	//遍历 RunListener 调用 starting 方法
   	try {
   		ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);//  保存命令行参数；ApplicationArguments
@@ -3100,4 +3102,72 @@ public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySourc
   }
   ```
 
-- 
+
+
+# 九、框架组件
+
+## 1、事件监听器和发布器
+
+### 1.1、示例
+
+```java
+@Configuration  
+public class A48_1 {  
+    public static void main(String[] args) {  
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(A48_1.class);  
+        context.getBean(MyService.class).doBusiness();  
+        context.close();  
+    }
+
+    // 事件对象
+    static class MyEvent extends ApplicationEvent {  
+        public MyEvent(Object source) {  
+            super(source);  
+        }  
+    }  
+
+	// 需要发布事件的服务
+    @Component
+    static class MyService {  
+        private static final Logger log = LoggerFactory.getLogger(MyService.class);  
+        @Autowired  
+        private ApplicationEventPublisher publisher; // applicationContext  
+        public void doBusiness() {  
+            log.debug("主线业务");  
+            // 主线业务完成后需要做一些支线业务，下面是问题代码  
+            publisher.publishEvent(new MyEvent("MyService.doBusiness()"));  
+        }  
+    }  
+
+	// 监听器，通过实现ApplicationListener接口
+	// 泛型MyEvent代表监听的事件
+    @Component  
+    static class EmailApplicationListener implements ApplicationListener<MyEvent> {  
+        private static final Logger log = LoggerFactory.getLogger(EmailApplicationListener.class);  
+        @Override  
+        public void onApplicationEvent(MyEvent event) {  
+            log.debug("发送邮件");  
+        }  
+    }  
+  
+	// 普通Component，通过在方法上添加@EventListener注解
+	// 必须有一个参数，该参数是监听的事件
+	@Component  
+	static class SmsService {  
+	    private static final Logger log = LoggerFactory.getLogger(SmsService.class);  
+	    @EventListener  
+	    public void listener(MyEvent myEvent) {  
+	        log.debug("发送短信");  
+	    }  
+	}
+
+}
+```
+
+
+### 1.2、原理
+
+[第 20 章 观察者模式 - Observer](Java设计模式#第%2020%20章%20观察者模式%20-%20Observer)
+
+![](image/Pasted%20image%2020240206142707.png)
+
