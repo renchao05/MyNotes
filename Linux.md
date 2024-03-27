@@ -1205,7 +1205,7 @@ username ALL=(ALL:ALL) ALL
 
 - 新建会话
   - tmux 按编号
-  - tmux new -s <session-name> 指定名称
+  - `tmux new -s <session-name>` 指定名称
   
 - 分离会话
   - tmux detach
@@ -1214,14 +1214,14 @@ username ALL=(ALL:ALL) ALL
   - tmux ls
   
 - 接入会话
-  - tmux att -t <编号或者名称>
-  - tmux attach -t <编号或者名称>
+  - `tmux att -t <编号或者名称>`
+  - `tmux attach -t <编号或者名称>`
   
 - 杀死会话
-  - tmux kill-session -t <编号或者名称>
+  - `tmux kill-session -t <编号或者名称>`
   
 - 切换会话
-  - tmux switch -t <编号或者名称>
+  - `tmux switch -t <编号或者名称>`
   
 - 翻页
 
@@ -1723,6 +1723,8 @@ https://mp.weixin.qq.com/s/sj7t0mRJ5_awx0TRhj3wUg
 - 查看指定目录：`du -sh /home`
   
 - 显示指定大小的目录：`du -h --threshold=1G`
+  
+- 限制 `du` 命令的深度：`du -d 1`
   
 - 查询指定目录的磁盘占用情况
 
