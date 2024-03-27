@@ -497,6 +497,44 @@ Docker容器产生的数据，如果不备份，那么当容器实例删除后�
 ![image.png](image/1656473019584-e0539b05-61a7-4baa-b94c-9d752d31857a.png)
 ## 7、匿名和具名挂载
 ![image.png](image/1656473327687-f89255e2-8717-4803-8827-8abd15d8b2b5.png)
+
+## 8、容器日志
+
+### 8.1、全局大小限制
+
+`vi /etc/docker/daemon.json`
+
+```bash
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
+```
+
+> 这个配置将设置日志文件的最大大小为 10MB，同时保留最多 3 个日志文件。请注意，这仅适用于 Docker 守护进程的 JSON 文件日志驱动程序。
+
+### 8.2、Docker容器配置
+
+```yaml
+nginx: 
+  image: nginx:1.12.1 
+  restart: always 
+  logging: 
+    driver: “json-file” 
+    options: 
+      max-size: “5g” 
+
+```
+
+### 8.3、手动删除
+
+Docker 默认情况下会将日志文件存储在 `/var/lib/docker/containers/<container-id>` 目录下，每个容器有一个对应的目录，其中包含该容器的日志文件。
+
+> 根据id查看对应的容器：`docker ps -a --filter "id=<容器ID>"`
+
 # 第 7 章、常规安装简介
 ## 1、总体步骤
 
