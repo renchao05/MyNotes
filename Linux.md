@@ -1778,7 +1778,18 @@ https://mp.weixin.qq.com/s/sj7t0mRJ5_awx0TRhj3wUg
 
   `tree 目录`
 
+## 12.5 磁盘性能测试
 
+```bash
+time dd if=/dev/zero of=./test bs=1M count=1000 conv=fdatasync
+# 从/dev/zero中读取数据，然后写入到./test文件中。
+# bs=1M 指定了块大小为1MB，count=1000指定了写入的块数，即总共写入1000MB的数据。
+# conv=fdatasync 会使dd命令等待数据被写入磁盘并同步。
+
+time dd if=./test of=/dev/null bs=1M
+# 从/tmp/testfile文件中读取数据，并将其丢弃到/dev/null中，即不保存数据。
+# bs=1M指定了读取的块大小为1MB。
+```
 
 # 十三、 网络配置
 
