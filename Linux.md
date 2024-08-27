@@ -2170,6 +2170,37 @@ sudo yum -x http://<username>:<password>@<proxy_host>:<proxy_port> install <pack
   > - TIME：CPU 时间
   > - CMD：启动进程所用的命令和参数
 
+### 14.2.4 进程详细信息
+
+Linux在启动一个进程时，系统会在/proc下创建一个以PID命名的文件夹，在该文件夹下会有详细的进程的信息。
+
+```bash
+[root@iZuf65noqer6cppog604ckZ bin]# ll /proc/7248
+total 0
+dr-xr-xr-x 2 root root 0 Aug 27 10:51 attr
+-rw-r--r-- 1 root root 0 Aug 27 10:51 autogroup
+-r-------- 1 root root 0 Aug 27 10:51 auxv
+-r--r--r-- 1 root root 0 Mar 15 15:44 cgroup
+--w------- 1 root root 0 Aug 27 10:51 clear_refs
+-r--r--r-- 1 root root 0 Mar 15 15:45 cmdline
+-rw-r--r-- 1 root root 0 Mar 15 15:44 comm
+-rw-r--r-- 1 root root 0 Aug 27 10:51 coredump_filter
+-r--r--r-- 1 root root 0 Aug 27 10:51 cpuset
+lrwxrwxrwx 1 root root 0 Mar 15 15:44 cwd -> /usr/local/bin
+-r-------- 1 root root 0 Jul 11 06:48 environ
+lrwxrwxrwx 1 root root 0 Mar 15 15:45 exe -> /usr/local/bin/redis-server
+dr-x------ 2 root root 0 Mar 15 15:45 fd
+dr-x------ 2 root root 0 Aug 27 10:51 fdinfo
+...........
+...........
+```
+
+- cwd符号链接的是进程运行目录；
+- exe符号连接就是执行程序的绝对路径；
+- cmdline就是程序运行时输入的命令行命令；
+- environ记录了进程运行时的环境变量；
+- fd目录下是进程打开或使用的文件的符号连接。
+
 ## 14.3 终止进程 kill 和 killall
 
 ### 14.3.1 介绍
