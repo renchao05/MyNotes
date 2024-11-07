@@ -309,11 +309,11 @@ linux 运行稳定、对网络的良好支持性、低成本，且可以根据�
 
 - 编辑 /etc/ssh/sshd_config
 
-  - ```bash
-    # 找到下面两个配置，去掉注释
-    PermitRootLogin yes
-    PasswordAuthentication yes
-    ```
+```bash
+# 找到下面两个配置，去掉注释
+PermitRootLogin yes
+PasswordAuthentication yes
+```
 
 - 设置root密码：
   sudo passwd root
@@ -322,8 +322,17 @@ linux 运行稳定、对网络的良好支持性、低成本，且可以根据�
   systemctl restart sshd
 
 
+## 5.6 SSH无密登录配置
 
+```bash
+# 生成公钥和私钥，（三个回车），两个文件id_rsa（私钥）、id_rsa.pub（公钥）
+ssh-keygen -t rsa
 
+# 将公钥拷贝到要免密登录的目标机器上
+ssh-copy-id <目标机器>
+
+# 或者将公钥复制到目标机器的 ~/.ssh/authorized_keys
+```
 
 # 六、 Vi 和 Vim
 
@@ -1325,6 +1334,79 @@ curl -X POST \
 
 https://mp.weixin.qq.com/s/sj7t0mRJ5_awx0TRhj3wUg
 
+
+## 9.12、rsync远程同步工具
+
+```bash
+# 基本语法。 SRC：源文件或目录；DEST：目标文件或目录
+rsync [OPTION]... SRC DEST
+
+# -a：归档模式，表示递归传输文件并保持文件的权限、时间戳等属性。
+# -v：详细模式，显示详细信息。
+# -z：在传输过程中压缩文件，适合网络传输。
+# -r：递归传输目录下所有文件。
+# -P：显示传输进度，并在传输中断时继续传输。
+# --delete：在目标中删除源中已不存在的文件，以保持完全一致。
+# -e ssh：通过 SSH 协议进行传输，适合远程传输。
+
+
+# 本地同步目录
+rsync -av /source/directory/ /destination/directory/
+
+# 远程同步
+rsync -av -e ssh /local/directory/ user@remote_host:/remote/directory/
+
+# 保留符号链接、权限、时间戳等属性
+rsync -a /source/ /destination/
+
+# 显示进度并压缩传输
+rsync -azP /source/ user@remote_host:/destination/
+
+# 删除目标中不存在的文件
+rsync -av --delete /source/ user@remote_host:/destination/
+
+```
+
+> `rsync` 可以结合 `cron` 定时任务进行自动化，方便高效地实现持续同步和备份
+
+同步脚本
+
+```bash
+#!/bin/bash
+
+#1. 判断参数个数
+if [ $# -lt 1 ]
+then
+    echo Not Enough Arguement!
+    exit;
+fi
+
+#2. 遍历集群所有机器
+for host in a b c
+do
+    echo ====================  $host  ====================
+    #3. 遍历所有目录，挨个发送
+
+    for file in $@
+    do
+        #4. 判断文件是否存在
+        if [ -e $file ]
+            then
+                #5. 获取父目录
+                pdir=$(cd -P $(dirname $file); pwd)
+
+                #6. 获取当前文件的名称
+                fname=$(basename $file)
+                ssh $host "mkdir -p $pdir"
+                rsync -av --delete $pdir/$fname $host:$pdir
+            else
+                echo $file does not exists!
+        fi
+    done
+done
+
+
+```
 
 
 # 十、 组管理和权限管理
