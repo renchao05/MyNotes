@@ -3345,7 +3345,7 @@ echo "sum=$SUM"
 
 ## 17.10 Shell 综合案例
 
-### 17.13.1 需求
+### 17.10.1 备份数据库
 
 > 每天凌晨 2:30 备份 数据库 hspedu 到 /data/backup/db
 >
@@ -3384,6 +3384,17 @@ echo "备份数据库${DATABASE} 成功~"
 ```
 
 
+### 17.10.2 文件批量重命名
+
+```bash
+# 根据正则表达式批量重命名当前目录的文件，包括子目录
+find . -type f -name "*.zip" | while read -r file; do
+    new_name=$(echo "$file" | sed 's/-\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)/_\1/')
+    if [ "$file" != "$new_name" ]; then
+        mv "$file" "$new_name"
+    fi
+done
+```
 
 # 十八、 Ubuntu与Python
 
