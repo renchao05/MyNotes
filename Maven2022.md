@@ -303,6 +303,24 @@ public class CalculatorTest{
 安装的效果是将本地构建过程中生成的 jar 包存入 Maven 本地仓库。
 这个 jar 包在 Maven 仓库中的路径是根据它的坐标生成的。
 安装操作还会将 pom.xml 文件转换为 XXX.pom 文件一起存入本地仓库。
+
+### 7、源码和文档
+
+```bash
+# 一：源码
+# 生成源码的jar包
+mvn source:jar
+# 将源码安装到本地仓库
+mvn source:jar install
+
+# 二：文档
+# 生成项目的文档jar包
+mvn javadoc:jar
+# 将项目文档安装到本地仓库
+mvn javadoc:jar install
+```
+
+
 ## 第四节 创建 Maven 版的 Web 工程
 ### 1、说明
 使用 mvn archetype:generate 命令生成 Web 工程时，需要使用一个专门的 archetype。

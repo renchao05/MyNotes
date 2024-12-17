@@ -747,5 +747,26 @@ git config --global https.proxy https://用户名:密码@代理服务器地址:�
 请注意，在将用户名和密码包含在URL中可能会导致安全问题，尤其是在共享或公共环境中，因此请谨慎使用这种方式。
 
 
-
+## 12.2 git-svn
  
+### 12.2.1 常用命令
+
+```bash
+# 以下是一些常用的`git-svn`命令和它们的作用：
+git svn clone <SVN-URL> # 从SVN仓库克隆项目到Git仓库。
+git svn fetch # 从SVN仓库获取最新的变更。
+git svn rebase # 将SVN仓库的变更重新应用到Git仓库的当前分支上。
+git svn dcommit # 将本地Git提交推送到SVN仓库。
+git svn branch <branch-name> # 创建一个新的Git分支，从SVN分支派生。
+git svn log # 查看SVN仓库的提交历史。
+```
+
+### 12.2.2 同步SVN提交
+
+```bash
+# 第一步
+git svn fetch
+# 第二步
+git svn rebase
+```
+
