@@ -1205,7 +1205,7 @@ username ALL=(ALL:ALL) ALL
 
 - 新建会话
   - tmux 按编号
-  - tmux new -s <session-name> 指定名称
+  - `tmux new -s <session-name>` 指定名称
   
 - 分离会话
   - tmux detach
@@ -2681,7 +2681,9 @@ source .bash_profile
 > - 启动 idea bin 目录下 ./idea.sh，配置 jdk
 > - 编写 Hello world
 
-## 16.5 mysql5.7 的安装(!!)
+## 16.5 mysql5.7 的安装
+
+mysql8安装仓库宋红康MySQL高级部分
 
 > 1. 新建文件夹/opt/mysql，并cd进去
 >
@@ -2734,6 +2736,11 @@ update user set host = '%' where user='root';
 flush privileges;
 ```
 
+## 16.6 Oracle安装
+
+[Linux上的ORACLE 19C 数据库应用实践_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1ju411e78P/?vd_source=c54c78bc01ba0d1126a1a5c0702d8597)
+
+[Linux下安装Oracle数据库#2022全网最详细讲解_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1Ke4y147Dr/?vd_source=c54c78bc01ba0d1126a1a5c0702d8597)
 
 
 # 十七、 Shell 编程
