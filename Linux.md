@@ -1352,6 +1352,9 @@ rsync [OPTION]... SRC DEST
 # --delete：在目标中删除源中已不存在的文件，以保持完全一致。
 # -e ssh：通过 SSH 协议进行传输，适合远程传输。
 
+# -t 显式声明保留时间戳，可以保证目录的时间戳也不变
+# --info=progress2 仅显示整体进度
+
 
 # 本地同步目录
 rsync -av /source/directory/ /destination/directory/
@@ -1367,6 +1370,9 @@ rsync -azP /source/ user@remote_host:/destination/
 
 # 删除目标中不存在的文件
 rsync -av --delete /source/ user@remote_host:/destination/
+
+# 保留时间戳（包括目录），仅显示整体进度
+rsync -at --info=progress2 /aa /bb/
 
 ```
 
