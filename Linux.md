@@ -1820,21 +1820,28 @@ done
 - 说明：
 
   ```shell
+  # 文件系统的唯一标识符                        分区的挂载位置        文件系统类型   挂载选项    dump备份选项 和 fsck检查选项
   UUID=fe895090-0fcc-4220-8a09-f57649ac0de9 /newdisk                ext4    defaults        0 0
   UUID=52c4d380-a45b-4124-b885-55962dfbbe2d /                       ext4    defaults        1 1
   UUID=03f5fc2e-731e-49d1-bcf2-e5808f44e5cf /boot                   ext4    defaults        1 2
   UUID=c265081b-f96b-49c0-ab77-f159ce298853 swap                    swap    defaults        0 0
   ```
-
+  
   UUID 是分区的唯一标识符。可以使用 `lsblk -f` 进行查看。
-
+  
   这一列也可以直接填分区名称。比如：
-
+  
   ```shell
   /dev/sdb1                                 /newdisk                ext4    defaults        0 0
   UUID=52c4d380-a45b-4124-b885-55962dfbbe2d /                       ext4    defaults        1 1
+  
+  # 挂载选项 
+  #   defaults通用； 
+  #   nofail 即使设备不可用，也不要阻止启动过程； 
+  #   x-systemd.automount 自动挂载配置，延迟挂载到首次访问时
+  UUID=b0680832-712c-489f-a26d-ef18e05085ac   /mnt/Cn77   ext4   defaults,nofail,x-systemd.automount  0  2
   ```
-
+  
   
 
 ## 12.3 磁盘情况查询
