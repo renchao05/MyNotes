@@ -1418,6 +1418,31 @@ done
 ```
 
 
+## 9.13、netcat
+
+netcat可以模拟 TCP服务端和客户端、UDP服务端和客户端、UNIX socket服务端和客户端、端口扫描、传输文件、将服务器bash暴露给远程客户端、内网穿透，反向获取防火墙后的机器的bash
+
+```bash
+# 1、模拟TCP服务端
+nc -lk 9090
+
+# 2、模拟TCP客户端
+printf "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n" | nc example.com 80
+
+# 3、模拟UDP服务端
+nc -lk -u 9090
+
+# 4、模拟UDP客户端
+nc -u 202.118.69.40 9090
+
+# 5、模拟UNIX socket服务端
+nc -Ul /tmp/mync.sock
+
+# 6、模拟UNIX socket客户端
+nc -U /tmp/mync.sock
+
+```
+
 # 十、 组和权限
 
 ## 10.1 Linux 组基本介绍
