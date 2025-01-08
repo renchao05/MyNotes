@@ -2219,7 +2219,55 @@ sudo yum -x http://<username>:<password>@<proxy_host>:<proxy_port> install <pack
 
 
 
+## 13.6 ufw防火墙
 
+```bash
+# 1、查看 ufw 状态
+ufw status
+ufw status verbose
+
+# 2、启用和禁用 ufw
+ufw enable
+ufw disable
+
+# 3. 允许和拒绝流量
+ufw allow OpenSSH  # 允许服务（如 SSH）通过防火墙
+ufw allow 8080     # 允许特定端口（如 8080）
+ufw allow 8080/tcp # 允许TCP协议
+ufw allow 8080/udp # 允许udp协议
+
+ufw deny 8080      # 拒绝特定服务或端口
+ufw deny 8080/tcp  # 拒绝端口TCP
+ufw deny 8080/udp  # 拒绝端口udp
+
+# 删除规则
+ufw delete allow 8080
+ufw delete deny 8080
+
+# 4. 基于IP地址控制流量
+ufw allow from 192.168.1.100                    # 允许某个 IP 地址通过防火墙
+ufw allow from 192.168.1.100 to any port 8080   # 允许来自特定 IP 的流量到达某个端口
+
+ufw deny from 192.168.1.100                     # 拒绝某个 IP 地址的流量
+
+ufw allow from 192.168.1.0/24      # 允许某个子网的访问，可以使用 CIDR 表示法
+
+
+# 6. 管理 ufw 应用配置
+ufw app list                     # 查看可用的应用程序
+ufw allow <application_name>     # 允许某个应用
+
+ufw app info <application_name>  # 查看某个应用的详细信息
+
+
+# 7. 限制连接数
+ufw limit ssh
+
+# 8、日志查看
+tail -f /var/log/ufw.log         # rsyslog日志服务管理的情况下
+journalctl | grep UFW            # 精简系统，没有安装rsyslog情况下，使用systemd-journald查看
+
+```
 
 
 
