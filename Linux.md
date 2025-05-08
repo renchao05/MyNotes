@@ -337,6 +337,46 @@ ssh-copy-id <目标机器>
 # 或者将公钥复制到目标机器的 ~/.ssh/authorized_keys
 ```
 
+## 5.7 ssh自动重连
+
+ssh自动重连实现端口转发
+
+1.设置免密登陆
+
+```bash
+ssh-keygen
+# 一路回车，默认路径保存（通常是 C:\Users\你的用户名\.ssh\id_rsa）
+
+ssh-copy-id username@linux_ip
+# 如果没有 ssh-copy-id，可以手动：
+scp C:\Users\你的用户名\.ssh\id_rsa.pub username@linux_ip:~/.ssh/authorized_keys
+```
+
+2.创建 auto_reconnect.ps1 文件
+
+```bash
+$server = "renchao@x.x.x.x"
+$remotePort = 3389
+$localPort = 3389
+
+while ($true) {
+    Write-Host "Establishing reverse tunnel $remotePort -> localhost:$localPort ..."
+    ssh -R $remotePort:localhost:$localPort $server `
+        -o ServerAliveInterval=60 `
+        -o ServerAliveCountMax=2 `
+        -o ExitOnForwardFailure=yes
+    Write-Host "SSH tunnel lost. Reconnecting in 5 seconds..."
+    Start-Sleep -Seconds 5
+}
+```
+
+3.打开PowerShell执行脚本
+
+```bash
+powershell -ExecutionPolicy Bypass -File .\Desktop\auto_reconnect.ps1
+```
+
+
 # 六、 Vi 和 Vim
 
 ## 6.1 基本介绍
