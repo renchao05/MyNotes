@@ -1232,21 +1232,23 @@ username ALL=(ALL:ALL) ALL
 
 > grep 过滤查找 ， 管道符，“|”，表示将前一个命令的处理结果输出传递给后面的命令处理。
 
-- 基本语法
-  `grep [选项] 查找内容 源文件`
 
-- 常用选项
+```bash
+# 基本语法
+grep [选项] 查找内容 源文件
 
-  > -n : 显示匹配行和行号
-  >
-  > -i : 忽略字母大小写
+# 常用选项
+-n : 显示匹配行和行号
+-i : 忽略字母大小写
+-C 100：显示前后各 100 行（C = context）
+-A 100：只显示匹配行 后面 100 行（A = after）
+-B 100：只显示匹配行 前面 100 行（B = before）
 
-- 应用实例
+# 应用实例
+# 输出所有包含 `Exception` 的行及其上下文 100 行
+grep -C 100 "Exception" /var/log/app.log
 
-  > 请在 hello.txt 文件中，查找 "yes" 所在行，并且显示行号
-  >
-  > - 写法 1: `cat /home/hello.txt | grep "yes"`
-  > - 写法 2: `grep -n "yes" `
+```
 
 
 
