@@ -2064,41 +2064,18 @@ time dd if=./test of=/dev/null bs=1M
 
 # 十三、 网络
 
-查看网络
+## 13.1 网络配置
 
-ifconfig
+### 13.6.1 自动获取
 
-ip addr show 或 ip a s 或ip addr 或 ip a
-
-## 13.1 网络环境配置
-
-### 13.6.1 第一种方法(自动获取)：
-
-> 说明：登陆后，通过界面的来设置自动获取 ip，特点：linux 启动后会自动获取 IP,缺点是每次自动获取的 ip 地址可能不一样
->
-> 如何没有自动获取，需要手动配置自动获取 ip命令：
->
 > - `vi /etc/sysconfig/network-scripts/ifcfg-ens33`
 > - 把ONBOOT设为yes
 
-### 13.6.2 第二种方法(指定 ip)
+### 13.6.2 指定 ip
 
-> 直接修改配置文件来指定 IP,并可以连接到外网(程序员推荐)
+修改网卡配置文件：`vi /etc/sysconfig/network-scripts/ifcfg-ens33`
 
-- 用 `ifconfig`或者`ip addr` 查看网络配置：
-
-- 修改网卡配置文件：
-
-  > `vi /etc/sysconfig/network-scripts/ifcfg-ens33`
-  >
-  > 注意：
-  >
-  > - 配置文件在 `/etc/sysconfig/network-scripts/`
-  > - 文件名可能不一样，也有可能是`ifcfg-eth0`
-
-- 配置文件说明
-
-  > 配置文件有的选项直接修改，没有的就添加。
+  > 文件名可能不一样，也有可能是`ifcfg-eth0`
 
   ```sh
   #系统启动的时候网络接口是否有效（yes/no）
@@ -2118,16 +2095,15 @@ ip addr show 或 ip a s 或ip addr 或 ip a
   - `service network restart` 
   - `reboot`
 
-## 13.2 设置主机名和 hosts 映射
+## 13.2 主机名和 hosts
 
-### 13.7.1 设置主机名
+### 13.7.1 主机名
 
-- 为了方便记忆，可以给 linux 系统设置主机名, 也可以根据需要修改主机名
 - 指令 `hostname` ： 查看主机名
 - 修改文件在 `/etc/hostname` 指定
 - 修改后，重启生效
 
-### 13.7.2 设置 hosts 映射
+### 13.7.2 hosts
 
 - Windows
   `C:\Windows\System32\drivers\etc\hosts`
@@ -2136,199 +2112,82 @@ ip addr show 或 ip a s 或ip addr 或 ip a
 - DNS解析流程
   ![image-20220402210045866](image/image-20220402210045866.png)
 
-## 13.3 firewall 防火墙设置
+## 13.3 防火墙
 
-> 底层 iptables
+> 防火墙内核是Netfilter，底层是通过 iptables 或 nftables 管理，上层还有firewall 和 ufw
 
-### 13.3.1 端口说明
-
-> 可以通过`nc 127.0.0.1 80` 或者 `telnet 127.0.0.1 80` 查看端口能否连通
-
-- **查看系统端口情况**
-  `netstat -anp | more`
-- **查看已经开放的端口号**
-  `firewall-cmd --zone=public --list-ports` 
-  `firewall-cmd --list-all`
-
-> 如果我们把防火墙打开，那么外部请求数据包就不能跟服务器监听端口通讯。
->
-> 这时，需要打开指定的端口。比如 80、22、8080 等。
->
->  ![image-20220403131123340](image/image-20220403131123340.png)
-
-### 13.3.2 firewall 指令
-
-- `firewall-cmd --permanent --add-port=端口号/协议` 打开端口
-- `firewall-cmd --permanent --remove-port=端口号/协议` 关闭端口
-- `firewall-cmd --reload` 设置好后，需要重新载入,才能生效 : 
-- `firewall-cmd --query-port=端口/协议` 查询端口是否开放
-
-### 13.3.2 应用案例
-
-- 启用防火墙， 测试 111 端口是否能 telnet , 不行
-- 开放 111 端口
-  - `firewall-cmd --permanent --add-port=111/tcp` ; 开启端口。
-  - `firewall-cmd --reload` 重新载入,使其生效。
-- 再次关闭 111 端口
-  - `firewall-cmd --permanent --remove-port=111/tcp` ; 关闭端口。
-  - `firewall-cmd --reload` 重新载入,使其生效。
-
-
-
-### 13.3.3 关闭防火墙
-
-> systemctl stop firewalld
->
-> systemctl disable firewalld
-
-
-
-### 13.3.4 netstat 和 ss
-
-- 显示正在监听TCP，UDP的端口
-  ss -tuln
-- 查看某个监听端口对应的进程信息
-  ss -tulnp | grep <本地端口>
-- 显示已经建立连接的端口
-  ss -tuln state established
-
-- 查看某个连接的详细信息
-  lsof -i :<本地端口>
+### 13.3.1  iptables
 
 ```bash
--h, --help          显示此帮助信息
--V, --version       显示版本信息
--n, --numeric       不解析服务名称
--r, --resolve       解析主机名
--a, --all           显示所有套接字
--l, --listening     显示监听套接字
--o, --options       显示计时器信息
--e, --extended      显示详细的套接字信息
--m, --memory        显示套接字内存使用情况
--p, --processes     显示使用套接字的进程
--i, --info          显示内部TCP信息
--s, --summary       显示套接字使用摘要
--b, --bpf           显示bpf过滤器套接字信息
--E, --events        持续显示销毁的套接字
--Z, --context       显示进程SELinux安全上下文
--z, --contexts      显示进程和套接字SELinux安全上下文
--N, --net           切换到指定的网络命名空间名称
+# 基础结构
+# -t：指定操作的表（可选，默认是 filter 表）
+# 命令：如 -A（添加）、-D（删除）、-I（插入）、-L（列出）等
+# 链名：如 INPUT, OUTPUT, FORWARD, PREROUTING, POSTROUTING
+# 条件：如 -s（源地址）、-p（协议）、--dport（目标端口）等
+# -j：指定动作，如 ACCEPT, DROP, REJECT, LOG, DNAT, SNAT, MASQUERADE
+iptables [-t 表名] 命令 链名 条件 -j 动作
 
--4, --ipv4          仅显示IP版本4的套接字
--6, --ipv6          仅显示IP版本6的套接字
--0, --packet        显示PACKET套接字
--t, --tcp           仅显示TCP套接字
--S, --sctp          仅显示SCTP套接字
--u, --udp           仅显示UDP套接字
--d, --dccp          仅显示DCCP套接字
--w, --raw           仅显示RAW套接字
--x, --unix          仅显示Unix域套接字
-   --vsock         仅显示vsock套接字
--f, --family=FAMILY 显示类型为FAMILY的套接字
-   FAMILY := {inet|inet6|link|unix|netlink|vsock|help}
 
--K, --kill          强制关闭套接字，显示被关闭的内容
--H, --no-header     禁止显示头部行
+# 查看规则
+iptables -L -n -v      # -n 禁用 DNS，-v 显示包/字节计数
+iptables -t nat -L     # 查看 nat 表规则
 
--A, --query=QUERY, --socket=QUERY
-   QUERY := {all|inet|tcp|udp|raw|unix|unix_dgram|unix_stream|unix_seqpacket|packet|netlink|vsock_stream|vsock_dgram}[,QUERY]
+# 添加规则
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT      # 允许 SSH 流量进入
+iptables -A INPUT -s 192.168.1.100 -j DROP         # 丢弃来自该 IP 的流量
+iptables -A FORWARD -i eth0 -o eth1 -j ACCEPT      # 允许 eth0 转发到 eth1
 
--D, --diag=FILE     将关于TCP套接字的原始信息转储到FILE中
--F, --filter=FILE   从FILE中读取过滤器信息
-   FILTER := [ state STATE-FILTER ] [ EXPRESSION ]
-   STATE-FILTER := {all|connected|synchronized|bucket|big|TCP-STATES}
-     TCP-STATES := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|closed|close-wait|last-ack|listen|closing}
-      connected := {established|syn-sent|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
-   synchronized := {established|syn-recv|fin-wait-{1,2}|time-wait|close-wait|last-ack|closing}
-         bucket := {syn-recv|time-wait}
-            big := {established|syn-sent|fin-wait-{1,2}|closed|close-wait|last-ack|listen|closing}
+# 删除规则
+iptables -D INPUT 1             # 删除 INPUT 链中的第1条规则 
+iptables -D INPUT -p tcp --dport 22 -j ACCEPT  # 删除指定规则
+
+
+# 插入规则
+iptables -I INPUT 1 -p icmp -j ACCEPT  # 插入到 INPUT 链第1行
+
+# 设置默认策略
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+# 清空规则 / 重置
+iptables -F             # 清空所有规则
+iptables -X             # 删除所有自定义链
+iptables -Z             # 将计数器归零
+iptables -t nat -F      # 清空 nat 表规则
+
+
+# 持久化配置
+iptables-save > /etc/iptables/rules.v4
+# 加载配置
+iptables-restore < /etc/iptables/rules.v4
+
+# 上面配置都是针对ipv4，如果配置ipv6需要使用ip6tables
+
+```
+
+### 13.3.2 firewall
+
+```bash
+# 查看已经开放的端口号
+firewall-cmd --zone=public --list-ports
+firewall-cmd --list-all
+firewall-cmd --query-port=端口/协议   # 查询端口是否开放
+
+firewall-cmd --permanent --add-port=端口号/协议  # 打开端口
+firewall-cmd --permanent --remove-port=端口号/协议 # 关闭端口
+
+# 设置好后，需要重新载入,才能生效
+firewall-cmd --reload
+
+# 关闭防火墙
+systemctl stop firewalld
+systemctl disable firewalld
+
 ```
 
 
-
-## 13.4 SSH隧道
-
-[彻底搞懂SSH端口转发命令 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/148825449)
-
-### 13.4.1 本地转发
-
-![image-20230814150752957](image/Linux/image-20230814150752957.png)
-
-> ssh -L 本地a端口:C:c端口 user@B
-> 此时"本地a端口" 可以通过与B的隧道访问C的"c端口"
-
-
-
-### 13.4.2 远程端口转发
-
-![image-20230814151526425](image/Linux/image-20230814151526425.png)
-
-> ssh -R c端口:C:c端口 user@B
-> 此时远程服务器B可以通过自己的b端口经过A的转发，访问C的c端口
-
-
-
-### 13.4.3 动态端口转发
-
-动态端口转发可以把本地主机A上运行的SSH客户端转变成一个SOCKS代理服务器；
-
-> SOCKS 可以使用浏览器插件Proxy SwitchyOmega
-
-`ssh -D local_port user@remote_host`
-
-
-
-
-
-
-
-## 13.5 设置网络代理
-
-### 13.5.1、当前会话代理
-
-```bash
-export http_proxy="http://localhost:12345"
-export https_proxy="http://localhost:12345"
-#非必须
-export socks_proxy="http://localhost:12345"
-
-#验证是否成功
-echo $http_proxy
-echo $https_proxy
-echo $socks_proxy
-```
-
-> 上面设置只在当前的 Shell 会话中生效
-
-
-
-### 13.5.2、yum配置代理
-
-方式一：
-
-- 编辑 /etc/yum.conf 最后一行加入
-
-```bash
-proxy=http://<proxy_host>:<proxy_port>
-# 用户验证
-proxy=http://<username>:<password>@<proxy_host>:<proxy_port>
-```
-
-
-
-方式二：
-
-在执行 yum 命令时，可以使用 -x 参数指定代理。例如：
-
-```bash
-sudo yum -x http://<proxy_host>:<proxy_port> install <package-name>
-# 用户验证
-sudo yum -x http://<username>:<password>@<proxy_host>:<proxy_port> install <package-name>
-```
-
-
-
-## 13.6 ufw防火墙
+### 13.3.3 ufw
 
 ```bash
 # 1、查看 ufw 状态
@@ -2378,6 +2237,303 @@ journalctl | grep UFW            # 精简系统，没有安装rsyslog情况下�
 
 ```
 
+
+
+
+### 13.3.4 netstat 和 ss
+
+- 显示正在监听TCP，UDP的端口
+  ss -tuln
+- 查看某个监听端口对应的进程信息
+  ss -tulnp | grep <本地端口>
+- 显示已经建立连接的端口
+  ss -tuln state established
+
+- 查看某个连接的详细信息
+  lsof -i :<本地端口>
+
+```bash
+# 显示正在监听TCP，UDP的端口
+ss -tuln
+
+# 查看某个监听端口对应的进程信息
+ss -tulnp | grep <本地端口>
+
+# 显示已经建立连接的端口
+ss -tuln state established
+
+# 查看某个连接的详细信息
+lsof -i :<本地端口>
+
+
+-h, --help          显示此帮助信息
+-V, --version       显示版本信息
+-n, --numeric       不解析服务名称
+-r, --resolve       解析主机名
+-a, --all           显示所有套接字
+-l, --listening     显示监听套接字
+-o, --options       显示计时器信息
+-e, --extended      显示详细的套接字信息
+-m, --memory        显示套接字内存使用情况
+-p, --processes     显示使用套接字的进程
+-i, --info          显示内部TCP信息
+-s, --summary       显示套接字使用摘要
+-b, --bpf           显示bpf过滤器套接字信息
+-E, --events        持续显示销毁的套接字
+-Z, --context       显示进程SELinux安全上下文
+-z, --contexts      显示进程和套接字SELinux安全上下文
+-N, --net           切换到指定的网络命名空间名称
+
+-4, --ipv4          仅显示IP版本4的套接字
+-6, --ipv6          仅显示IP版本6的套接字
+-0, --packet        显示PACKET套接字
+-t, --tcp           仅显示TCP套接字
+-S, --sctp          仅显示SCTP套接字
+-u, --udp           仅显示UDP套接字
+-d, --dccp          仅显示DCCP套接字
+-w, --raw           仅显示RAW套接字
+-x, --unix          仅显示Unix域套接字
+   --vsock         仅显示vsock套接字
+
+# 通过nc 127.0.0.1 80 或者 telnet 127.0.0.1 80 查看端口能否连通
+```
+
+
+
+## 13.4 SSH隧道
+
+[彻底搞懂SSH端口转发命令 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/148825449)
+
+### 13.4.1 本地转发
+
+![image-20230814150752957](image/Linux/image-20230814150752957.png)
+
+> ssh -L 本地a端口:C:c端口 user@B
+> 此时"本地a端口" 可以通过与B的隧道访问C的"c端口"
+
+
+
+### 13.4.2 远程端口转发
+
+![image-20230814151526425](image/Linux/image-20230814151526425.png)
+
+> ssh -R c端口:C:c端口 user@B
+> 此时远程服务器B可以通过自己的b端口经过A的转发，访问C的c端口
+
+
+
+### 13.4.3 动态端口转发
+
+动态端口转发可以把本地主机A上运行的SSH客户端转变成一个SOCKS代理服务器；
+
+> SOCKS 可以使用浏览器插件Proxy SwitchyOmega
+
+`ssh -D local_port user@remote_host`
+
+
+
+
+
+
+
+## 13.5 网络代理
+
+### 13.5.1、当前会话代理
+
+```bash
+export http_proxy="http://localhost:12345"
+export https_proxy="http://localhost:12345"
+#非必须
+export socks_proxy="http://localhost:12345"
+
+#验证是否成功
+echo $http_proxy
+echo $https_proxy
+echo $socks_proxy
+```
+
+> 上面设置只在当前的 Shell 会话中生效
+
+
+
+### 13.5.2、yum配置代理
+
+方式一：
+
+- 编辑 /etc/yum.conf 最后一行加入
+
+```bash
+proxy=http://<proxy_host>:<proxy_port>
+# 用户验证
+proxy=http://<username>:<password>@<proxy_host>:<proxy_port>
+```
+
+
+方式二：
+
+在执行 yum 命令时，可以使用 -x 参数指定代理。例如：
+
+```bash
+sudo yum -x http://<proxy_host>:<proxy_port> install <package-name>
+# 用户验证
+sudo yum -x http://<username>:<password>@<proxy_host>:<proxy_port> install <package-name>
+```
+
+
+### 13.5.3、透明代理
+
+>通过 `curl -x socks5://127.0.0.1:1080 google.com` 测试代理连通情况
+
+方式一：redsocks
+
+```bash
+# 在 A 上使用 SSH 建立 SOCKS5 代理连接到 B ,B是代理服务器
+ssh -N -D 1080 user@B公网IP
+
+# 客户端上安装并配置 redsocks
+apt install redsocks
+# /etc/redsocks.conf 可以默认
+base {
+    log_debug = off;
+    log_info = on;
+    daemon = on;
+    redirector = iptables;
+}
+
+redsocks {
+    local_ip = 127.0.0.1;
+    local_port = 12345;
+    ip = 127.0.0.1;
+    port = 1080;
+    type = socks5;
+}
+
+
+# 启用IP转发
+sudo sysctl -w net.ipv4.ip_forward=1
+# 创建新的 chain
+sudo iptables -t nat -N REDSOCKS
+# 允许本地回环流量
+sudo iptables -t nat -A REDSOCKS -d 127.0.0.0/8 -j RETURN
+# 可选：白名单，跳过内网地址
+sudo iptables -t nat -A REDSOCKS -d 192.168.0.0/16 -j RETURN
+sudo iptables -t nat -A REDSOCKS -d 10.0.0.0/8 -j RETURN
+# 其他流量转发到 redsocks
+sudo iptables -t nat -A REDSOCKS -p tcp -j REDIRECT --to-ports 12345
+# 应用到 OUTPUT chain
+sudo iptables -t nat -A OUTPUT -p tcp -j REDSOCKS
+
+systemctl restart redsocks
+
+# 注意：只会代理 TCP 流量，UDP 无法代理。
+```
+
+
+方式二：v2ray
+
+[透明代理 | 新 V2Ray 白话文指南](https://guide.v2fly.org/app/transparent_proxy.html)
+
+客户端添加 dokodemo door 协议的入站配置 ，并开启 sniffing；还要在所有 outbound 的 streamSettins 添加 SO_MARK。（每个outbound 都要添加 streamSettins，主要是给流量添加mark标记。）
+
+```json
+{
+  "inbounds": [
+    {
+      "port": 1080,
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true
+      }
+    },
+    {
+      "port": 12345,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "network": "tcp,udp",
+        "followRedirect": true
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": ["http", "tls"]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "129.146.16.104",
+            "port": 26823,  
+            "users": [
+              {
+                "id": "119f9761-a598-4044-b3f0-837fcf98ff47",
+                "alterId": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255
+        }
+      }
+    },
+    {
+      "protocol": "freedom",
+      "settings": {},
+      "tag": "direct",
+      "streamSettings": {
+        "sockopt": {
+          "mark": 255
+        }
+      }
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "direct",
+        "domain": ["geosite:cn"]
+      },
+      {
+        "type": "field",
+        "outboundTag": "direct",
+        "ip": [
+          "geoip:cn",
+          "geoip:private"
+        ]
+      }
+    ]
+  }
+}
+```
+
+> v2ray如果是普通用户直接运行二进制文件，要添加CAP_NET_ADMIN权限，不然流量标记打不上
+> 或者直接root用户运行也可以
+> `sudo setcap cap_net_admin=eip /home/renchao/v2ray-linux-64/v2ray`
+
+iptables 配置
+```bash
+# 开启IP转发。在/etc/sysctl.conf添加一行 net.ipv4.ip_forward=1 ，执行下列命令生效：
+sysctl -p
+
+iptables -t nat -N V2RAY # 新建一个名为 V2RAY 的链
+iptables -t nat -A V2RAY -d 192.168.0.0/16 -j RETURN # 直连 192.168.0.0/16 
+iptables -t nat -A V2RAY -p tcp -j RETURN -m mark --mark 0xff # 直连 SO_MARK 为 0xff 的流量(0xff 是 16 进制数，数值上等同与上面配置的 255)，此规则目的是避免代理本机(网关)流量出现回环问题
+iptables -t nat -A V2RAY -p tcp -j REDIRECT --to-ports 12345 # 其余流量转发到 12345 端口（即 V2Ray）
+iptables -t nat -A PREROUTING -p tcp -j V2RAY # 对局域网其他设备进行透明代理
+iptables -t nat -A OUTPUT -p tcp -j V2RAY # 对本机进行透明代理
+```
 
 
 
