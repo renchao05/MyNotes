@@ -1119,14 +1119,43 @@ username ALL=(ALL:ALL) ALL
 
 ## 9.5 时间日期类
 
-### 9.5.1 date - 显示日期时间
+### 9.5.1 日期时间
 
-- 基本语法
-  - `date` （显示当前时间）
-  - `date +%Y`（显示当前年份）
-  - `date +%m`（显示当前月份）
-  - `date +%d` （显示当前是哪一天）
-  - `date "+%Y-%m-%d %H:%M:%S"`（显示年月日时分秒）
+```bash
+# 查看当前时间和时区
+date
+
+# 查看详细时间信息
+timedatectl
+
+# 设置系统时间
+sudo date -s "2025-08-07 16:30:00"
+
+# 设置硬件时间（RTC）
+sudo hwclock --systohc  # 同步到硬件时钟
+sudo hwclock --hctosys  # 硬件时间写到系统
+
+# 设置时区
+timedatectl list-timezones # 列出所有可用时区
+sudo timedatectl set-timezone Asia/Shanghai  # 设置时区
+
+
+# date 命令常用格式化选项
+date +"格式字符串"
+date +"%Y-%m-%d %H:%M:%S"
+# 选项	含义	示例值
+# %Y	年（4位）	2025
+# %m	月（01-12）	08
+# %d	日（01-31）	07
+# %H	小时（00-23）	16
+# %M	分（00-59）	10
+# %S	秒（00-59）	30
+# %Z	时区缩写	CST
+# %z	时区偏移	+0800
+
+
+```
+
 
 ### 9.5.2 cal - 查看日历
 
