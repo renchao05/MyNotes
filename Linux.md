@@ -2062,6 +2062,42 @@ time dd if=./test of=/dev/null bs=1M
 # bs=1M指定了读取的块大小为1MB。
 ```
 
+
+## 12.6 swap配置
+
+```bash
+# 添加，一般Centos使用fallocate文件名，Ubuntu使用swap.img
+sudo swapoff -a
+sudo rm /swapfile
+sudo fallocate -l 16G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# 永久生效
+vim /etc/fstab  # 最后添加一行
+/swapfile none swap sw 0 0
+
+
+# swap配置完后，vm.swappiness 还需要配置一下，默认值是60
+# vm.swappiness 取值范围 0~100，数值越大，内核越愿意把不常用的内存页换到 swap。
+# 0 → 除非内存真的快用光了，否则绝不会用 swap
+# 10 → 尽量用物理内存，只在快满时用一点点 swap
+# 60（默认） → 平衡使用内存和 swap
+# 80~100 → 很积极地用 swap（通常不建议）
+cat /proc/sys/vm/swappiness  # 查看
+# 临时修改
+sysctl vm.swappiness=10 
+
+# 永久修改
+vim /etc/sysctl.conf # 末尾加一行，如果已有，直接修改
+vm.swappiness=10
+
+sysctl -p # 生效
+
+```
+
+
 # 十三、 网络
 
 ## 13.1 网络配置
