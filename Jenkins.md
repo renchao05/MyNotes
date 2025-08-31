@@ -464,3 +464,23 @@ pipeline {
 
 ```
 
+
+# 八、脚本
+
+Jenkins 提供了 **脚本控制台**（`Manage Jenkins → Script Console`）
+
+```bash
+# 删除构建记录
+# 用 Groovy 删除，比如删除某个 Job 的第 15 次构建
+Jenkins.instance.getItemByFullName("job-name").getBuildByNumber(15).delete()
+
+# 删除某个 Job 的所有构建
+Jenkins.instance.getItemByFullName("job-name").getBuilds().each { it.delete() }
+
+
+# 其他用法
+。。。。
+
+
+
+```
