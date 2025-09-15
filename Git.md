@@ -374,6 +374,9 @@ $ git push [remote] --all
 ## 4.9 撤销
 
 ```bash
+# 撤回最近一次 commit（保留修改到工作区）相当于还没执行git commit
+git reset --soft HEAD~1
+
 # 恢复暂存区的指定文件到工作区
 $ git checkout -- [file]
 $ git restore <file>
