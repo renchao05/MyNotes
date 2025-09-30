@@ -768,3 +768,56 @@ acme.sh --issue  .....  --debug 2
     }
 ```
 
+
+
+
+# 第 13 章 日志
+
+
+
+```bash
+# log_format 定义输出内容  只能写在 http {} 块里面
+# log_format 常见变量
+#     $remote_addr：客户端 IP
+#     $remote_user：认证用户
+#     $time_local：请求时间
+#     $request：请求行（如 GET /index.html HTTP/1.1）
+#     $status：HTTP 状态码
+#     $body_bytes_sent：响应大小（不含头部）
+#     $http_referer：来源页面
+#     $http_user_agent：浏览器 UA
+#     $http_x_forwarded_for：代理转发的客户端 IP
+
+# access_log 访问日志 生效位置：http(全局)、server(单个虚拟主机)、location(某个路径)
+# error_log  错误日志 生效位置：main/http/server/location；格式固定，不能使用log_format
+
+http {
+    # 定义日志格式，只能放在 http 块
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent"';
+
+    # 全局日志，后面的main如果没有，默认使用系统的 combined
+    access_log /var/log/nginx/access.log main;
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        # 单独 server 日志
+        access_log /var/log/nginx/example_access.log main;
+
+        location /api {
+            # 只记录这个 location 的日志
+            access_log /var/log/nginx/api_access.log main;
+        }
+    }
+}
+
+
+error_log  /var/log/nginx/error.log  warn;
+# 日志级别：debug | info | notice | warn | error | crit | alert | emerg
+# 默认级别是 error，推荐线上使用 warn 或 error，调试时用 debug。
+
+
+```
