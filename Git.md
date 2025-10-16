@@ -145,6 +145,20 @@ $ git rm --cached [file]
 
 # 改名文件，并且将这个改名放入暂存区
 $ git mv [file-original] [file-renamed]
+
+# 删除未跟踪文件（保留 `.gitignore` 文件）
+git clean -f
+
+# 未跟踪的目录也删除
+git clean -fd
+
+# 连 .gitignore 忽略的文件也要删除（慎用！）
+git clean -xfd
+
+# 在真正删除前，先看看哪些文件会被删
+git clean -fdn
+git clean -fd --dry-run
+
 ```
 
 ## 4.4 代码提交
