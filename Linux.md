@@ -1581,6 +1581,23 @@ nc -U /tmp/mync.sock
 
 ```
 
+9.14、watch
+能够定期执行指定的命令，并将输出结果全屏显示。这个命令特别适合用于监控系统状态、文件变化或任何需要持续观察的命令输出。
+
+```bash
+# -n 设置刷新间隔时间（秒），默认2秒	watch -n 5 date
+# -d 高亮显示两次刷新之间的差异	watch -d ls -l
+# -t 不显示顶部的时间、命令和间隔信息	watch -t free -h
+# -b 当命令退出码非零时发出蜂鸣声	watch -b ping example.com
+# -e 命令执行错误时停止更新并退出	watch -e ./check_status.sh
+# -g 当命令输出变化时退出	watch -g ls -l
+# -c 解释 ANSI 颜色和样式序列	watch -c 'ls --color=always'
+
+watch -n 1 -d find .  # 每隔1秒刷新显示当前目录的文件情况
+
+
+```
+
 # 十、 组和权限
 
 ## 10.1 Linux 组基本介绍
