@@ -152,17 +152,38 @@ rm -rf /var/lib/containerd
 ```
 ## 4、阿里云镜像加速
 [https://promotion.aliyun.com/ntms/act/kubernetes.html](https://promotion.aliyun.com/ntms/act/kubernetes.html)
-![image.png](image/1656211411810-dcbe5361-e21d-433b-ab23-3b7fd11e2a4c.png)
 
 ```bash
+# 目前阿里云只能再自家产品上使用了
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "registry-mirrors": ["https://baxqt5v7.mirror.aliyuncs.com"]
+	"registry-mirrors": [
+		"https://baxqt5v7.mirror.aliyuncs.com",
+		"https://46a0978e0cb54a6ebb41a7499829129c.mirror.swr.myhuaweicloud.com"
+	]
 }
 EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+
+######     测试镜像源可访问性
+# 方法 1：curl 测试镜像源可访问性（最直接）
+# 假设你的镜像源是：https://baxqt5v7.mirror.aliyuncs.com 后面加/v2/
+# 如果返回HTTP/2 200 则镜像源可用
+curl -I https://baxqt5v7.mirror.aliyuncs.com/v2/
+
+# 方法 2：测试 Docker 是否实际使用镜像源
+docker info | grep -A 5 "Registry Mirrors"
+# 输出类似：
+Registry Mirrors:
+ https://baxqt5v7.mirror.aliyuncs.com/
+
+
+# 测试 Docker Hub API
+curl https://registry-1.docker.io/v2/
+# 如果返回：{"errors":[{"code":"UNAUTHORIZED"}]}  说明网络连通（这是正常返回）。
+
 ```
 
 ## 4-1、Dockerd 代理
