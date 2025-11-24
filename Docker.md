@@ -228,165 +228,158 @@ docker利用的是宿主机的内核,而不需要加载操作系统OS内核
 ![image.png](image/1656211817419-d8726af5-f1df-4968-8145-2728a687bfe1.png)
 # 第 3 章、常用命令
 ## 1、帮助启动类
-| **命令**                 | **功能**               |
-| ------------------------ | ---------------------- |
-| systemctl start docker   | 启动docker             |
-| systemctl stop docker    | 停止docker             |
-| systemctl restart docker | 重启docker             |
-| systemctl status docker  | 查看docker状态         |
-| systemctl enable docker  | 开机启动               |
-| docker info              | 查看docker概要信息     |
-| docker --help            | 查看docker总体帮助文档 |
-| docker 具体命令 --help   | 查看docker命令帮助文档 |
-
-## 2、镜像命令
-| **命令**                      | **功能**                       | **说明**                                                   |
-| ----------------------------- | ------------------------------ | ---------------------------------------------------------- |
-| docker images                 | 列出本地主机上的镜像           | -a :列出本地所有的镜像（含历史映像层）；-q :只显示镜像ID。 |
-| docker search xxx             | 列出远程仓库镜像               | --limit : 只列出N个镜像。默认25个                          |
-| docker pull xxx[:TAG]         | 下载镜像                       | 没有TAG就是最新版                                          |
-| docker system df              | 查看镜像/容器/数据卷所占的空间 |                                                            |
-| docker rmi XXX                | 删除镜像                       | -f：强制删除。删除全部docker rmi -f $(docker images -qa)   |
-| docker system prune --volumes | 清除docker镜像缓存             |                                                            |
-
-批量删除符合正则条件的镜像
 
 ```bash
-# 比如：名称包含5000/mall，版本号是0.0.1的镜像
+systemctl start docker # 启动docker
+systemctl stop docker # 停止docker
+systemctl restart docker # 重启docker
+systemctl status docker # 查看docker状态
+systemctl enable docker # 开机启动
+docker info # 查看docker概要信息
+docker --help # 查看docker总体帮助文档
+docker 具体命令 --help # 查看docker命令帮助文档
+```
+
+## 2、镜像命令
+
+```bash
+# 列出本地主机上的镜像。-a :列出本地所有的镜像（含历史映像层）；-q :只显示镜像ID
+docker images
+# 列出远程仓库镜像。--limit : 只列出N个镜像。默认25个
+docker search xxx
+docker pull xxx[:TAG]  # 下载镜像。没有TAG就是最新版 
+
+# 查看镜像/容器/数据卷所占的空间
+docker system df
+
+# 删除镜像
+docker rmi XXX   # -f：强制删除。
+docker rmi -f $(docker images -qa)  # 删除全部镜像
+
+# 批量删除符合正则条件的镜像，比如：名称包含5000/mall，版本号是0.0.1的镜像
 # 10.0.0.86:5000/mall-auth-server    0.0.1    e0d081b9747d   6 days ago   469MB
 docker images | grep '5000/mall.*\b0\.0\.1\b' | awk '{print $3}' | xargs docker rmi
+
+# 清除docker镜像缓存
+docker system prune --volumes
+
+docker image prune  # 清理虚悬镜像 <none>
+docker image prune -a  # 删除所有未使用的镜像（不仅仅是 <none>）
+
+docker images -f "dangling=true"  # 查看所有虚悬镜像
+
+```
+
+
+## 3、容器命令
+
+```bash
+# 新建+启动容器
+#  --name="容器名"。指定一个名称
+#  -d：后台运行容器并返回容器ID
+#  -i：以交互模式运行容器，通常与 -t 同时使用
+#  -t：为容器重新分配一个伪输入终端，通常与 -i 同时使用
+#  -P: 随机端口映射
+#  -p: 指定端口映射
+docker run -it centos bash
+
+
+# 列出容器，默认正在运行的 | -a :所有；-l :最近；-n：近n个；-q :只显编号。
+docker ps [OPTIONS]
+docker ps --format "{{.ID}}:{{.Names}}"  # 格式化列出容器
+
+# 退出容器
+exit  # run进容器，exit，容器停止
+ctrl+p+q   # 容器不停止
+
+# 启动 重启 停止容器
+docker start
+docker restart
+docker stop
+
+# 设置开机启动
+docker update 容器 --restart=always
+
+# 强制停止容器
+docker kill 容器ID或容器名
+
+# 删除已停止的容器
+docker rm 容器ID
+docker ps -aq | xargs docker rm
+
+# 查看容器日志，-f 持续输出  --tail 50  输出最后行数
+docker logs 容器ID
+
+# 查看容器内运行的进程
+docker top 容器ID
+
+# 查看容器内部细节信息
+docker inspect 容器ID
+
+# 查看容器资源消耗情况
+docker stats
+
+
+# 进入运行的容器
+# 在容器中打开新的终端，启动新的进程。用exit退出，不会导致容器的停止。
+docker exec -it 容器ID bash
+# 直接进入容器启动命令的终端，不会启动新的进程。exit退出，会导致容器的停止
+docker attach 容器ID  # 直接进入容器启动命令的终端，不会启动新的进程
+
+
+# 容器与主机文件拷贝
+docker cp  容器ID:容器内路径 目的主机路径  # 容器→主机
+docker cp 主机文件  容器ID:容器路径   # 主机→容器
+
 ```
 
 
 
-> docker虚悬镜像dangling image：
-> 仓库名、标签都是`<none>`的镜像，俗称虚悬镜像。
->
-> 查看所有虚悬镜像：docker images -f "dangling=true"
->
-> 删除虚悬镜像：docker image prune -f
-
-## 3、容器命令
-有镜像才能创建容器， 这是根本前提(下载一个CentOS或者ubuntu镜像演示)
-docker pull ubuntu 本次演示用ubuntu演示
-### 3.1、新建+启动容器
-`docker run [OPTIONS] IMAGE [COMMAND] [ARG...]`
-OPTIONS说明（常用）：有些是一个减号，有些是两个减号
-
-- `--name="容器新名字" `：为容器指定一个名称；
-- `-d`：后台运行容器并返回容器ID，也即启动守护式容器(后台运行)；
-- `-i`：以交互模式运行容器，通常与 -t 同时使用；
-- `-t`：为容器重新分配一个伪输入终端，通常与 -i 同时使用；
-   - 即启动交互式容器(前台有伪终端，等待交互)；
-- `-P`: 随机端口映射，大写P
-- `-p`: 指定端口映射，小写p
-   - ![image.png](image/1656224609479-e52d7a0b-d499-479b-a2d3-08f335bb82f5.png)
-
-![image.png](image/1656224877257-101f5947-647b-4cc3-8bfa-575bd89a8da6.png)
-使用镜像centos:latest以交互模式启动一个容器,在容器内执行/bin/bash命令。
-> /bin/bash 不加，也有默认终端
-
-### 3.2、其他命令
-| **命令**                                | **功能**                 | **说明**                                      |
-| --------------------------------------- | ------------------------ | --------------------------------------------- |
-| docker ps [OPTIONS]                     | 列出容器，默认正在运行的 | -a :所有；-l :最近；-n：近n个；-q :只显编号。 |
-| docker ps --format "{{.ID}}:{{.Names}}" | 格式列出容器             |                                               |
-| exit                                    | 退出容器                 | run进容器，exit，容器停止                     |
-| ctrl+p+q                                | 退出容器                 | 容器不停止                                    |
-| docker start 容器ID或者容器名           | 启动已停止运行的容器     |                                               |
-| docker restart 容器ID或者容器名         | 重启容器                 |                                               |
-| docker stop 容器ID或者容器名            | 停止容器                 |                                               |
-| docker update 容器 --restart=always     | 开机启动                 |                                               |
-| docker kill 容器ID或容器名              | 强制停止容器             |                                               |
-| docker rm 容器ID                        | 删除已停止的容器         | docker ps -aq &#124; xargs docker rm          |
-| docker logs 容器ID                      | 查看容器日志             |                                               |
-| docker top 容器ID                       | 查看容器内运行的进程     |                                               |
-| docker inspect 容器ID                   | 查看容器内部细节信息     |                                               |
-| docker stats                            | 查看容器资源消耗情况     |                                               |
-
-### 3.3、守护式容器(后台服务器)
-在大部分的场景下，我们希望 docker 的服务是在后台运行的， 我们可以过 -d 指定容器的后台运行模式。
-docker run -d 容器名
-> 注意：
-> Docker容器后台运行,就必须有一个前台进程。
-
-### 3.4、进入运行的容器
-**进入正在运行的容器并以命令行交互**
-
-- docker exec -it 容器ID bashShell
-- docker attach 容器ID
-
-**上述两个区别**
-
-- attach：
-   - 直接进入容器启动命令的终端，不会启动新的进程。
-   - 用exit退出，会导致容器的停止。
-- exec：
-   - 是在容器中打开新的终端，并且可以启动新的进程。
-   - 用exit退出，不会导致容器的停止。
-> 推荐使用 docker exec 命令，因为退出容器终端，不会导致容器的停止。
-
-**进入redis服务**
-
-- docker exec -it 容器ID /bin/bash
-- docker exec -it 容器ID redis-cli
-> 一般用-d后台启动的程序，再用exec进入对应容器实例
-
-### 3.5、容器与主机文件拷贝
-
-- 容器→主机
-   - `docker cp  容器ID:容器内路径 目的主机路径`
-- 主机→容器
-   - `docker cp 主机文件  容器ID:容器路径`
-### 3.6、导入导出容器
-
-- export 导出容器的内容留作为一个tar归档文件[对应import命令]
-   - docker export 容器ID > 文件名.tar
-- import 从tar包中的内容创建一个新的文件系统再导入为镜像[对应export]
-   - cat 文件名.tar | docker import - 镜像用户/镜像名:镜像版本号
 ## 4、小总结
+
 ![image.png](image/1656235680867-53c4d604-4478-4dee-95e2-f4920201fdb0.png)
 
-| **命令** | **中文说明**                                        | **英文说明**                                                 |
-| -------- | --------------------------------------------------- | ------------------------------------------------------------ |
-| attach   | 当前 shell 下 attach 连接指定运行镜像               | Attach to a running container                                |
-| build    | 通过 Dockerfile 定制镜像                            | Build an image from a Dockerfile                             |
-| commit   | 提交当前容器为新的镜像                              | Create a new image from a container changes                  |
-| cp       | 从容器中拷贝指定文件或者目录到宿主机中              | Copy files/folders from the containers filesystem to the host path |
-| create   | 创建一个新的容器，同 run，但不启动容器              | Create a new container                                       |
-| diff     | 查看 docker 容器变化                                | Inspect changes on a container's filesystem                  |
-| events   | 从 docker 服务获取容器实时事件                      | Get real time events from the server                         |
-| exec     | 在已存在的容器上运行命令                            | Run a command in an existing container                       |
-| export   | 导出容器的内容流作为一个 tar 归档文件[对应 import ] | Stream the contents of a container as a tar archive          |
-| history  | 展示一个镜像形成历史                                | Show the history of an image                                 |
-| images   | 列出系统当前镜像                                    | List images                                                  |
-| import   | 从tar包中的内容创建一个新的文件系统映像[对应export] | Create a new filesystem image from the contents of a tarball |
-| info     | 显示系统相关信息                                    | Display system-wide information                              |
-| inspect  | 查看容器详细信息                                    | Return low-level information on a container                  |
-| kill     | kill 指定 docker 容器                               | Kill a running container                                     |
-| load     | 从一个 tar 包中加载一个镜像[对应 save]              | Load an image from a tar archive                             |
-| login    | 注册或者登陆一个 docker 源服务器                    | Register or Login to the docker registry server              |
-| logout   | 从当前 Docker registry 退出                         | Log out from a Docker registry server                        |
-| logs     | 输出当前容器日志信息                                | Fetch the logs of a container                                |
-| port     | 查看映射端口对应的容器内部源端口                    | Lookup the public-facing port which is NAT-ed to PRIVATE_PORT |
-| pause    | 暂停容器                                            | Pause all processes within a container                       |
-| ps       | 列出容器列表                                        | List containers                                              |
-| pull     | 从docker镜像源服务器拉取指定镜像或者库镜像          | Pull an image or a repository from the docker registry server |
-| push     | 推送指定镜像或者库镜像至docker源服务器              | Push an image or a repository to the docker registry server  |
-| restart  | 重启运行的容器                                      | Restart a running container                                  |
-| rm       | 移除一个或者多个容器                                | Remove one or more containers                                |
-| rmi      | 移除一个或多个镜像[无容器使用该镜像才可删除]        | Remove one or more images                                    |
-| run      | 创建一个新的容器并运行一个命令                      | Run a command in a new container                             |
-| save     | 保存一个镜像为一个 tar 包[对应 load]                | Save an image to a tar archive                               |
-| search   | 在 docker hub 中搜索镜像                            | Search for an image on the Docker Hub                        |
-| start    | 启动容器                                            | Start a stopped containers                                   |
-| stop     | 停止容器                                            | Stop a running containers                                    |
-| tag      | 给源中镜像打标签                                    | Tag an image into a repository                               |
-| top      | 查看容器中运行的进程信息                            | Lookup the running processes of a container                  |
-| unpause  | 取消暂停容器                                        | Unpause a paused container                                   |
-| version  | 查看 docker 版本号                                  | Show the docker version information                          |
-| wait     | 截取容器停止时的退出状态值                          | Block until a container stops, then print its exit code      |
-| stats    | 查看资源占用情况                                    |                                                              |
+```bash
+attach   # 当前 shell 下 attach 连接指定运行镜像
+build    # 通过 Dockerfile 定制镜像
+commit   # 提交当前容器为新的镜像
+cp       # 从容器中拷贝指定文件或者目录到宿主机中
+create   # 创建一个新的容器，同 run，但不启动容器
+diff     # 查看 docker 容器变化
+events   # 从 docker 服务获取容器实时事件
+exec     # 在已存在的容器上运行命令
+export   # 导出容器的内容流作为一个 tar 归档文件[对应 import ]
+history  # 展示一个镜像形成历史
+images   # 列出系统当前镜像
+import   # 从tar包中的内容创建一个新的文件系统映像[对应export]
+info     # 显示系统相关信息
+inspect  # 查看容器详细信息
+kill     # kill 指定 docker 容器
+load     # 从一个 tar 包中加载一个镜像[对应 save]
+login    # 注册或者登陆一个 docker 源服务器
+logout   # 从当前 Docker registry 退出
+logs     # 输出当前容器日志信息
+port     # 查看映射端口对应的容器内部源端口
+pause    # 暂停容器
+ps       # 列出容器列表
+pull     # 从docker镜像源服务器拉取指定镜像或者库镜像
+push     # 推送指定镜像或者库镜像至docker源服务器
+restart  # 重启运行的容器
+rm       # 移除一个或者多个容器
+rmi      # 移除一个或多个镜像[无容器使用该镜像才可删除]
+run      # 创建一个新的容器并运行一个命令
+save     # 保存一个镜像为一个 tar 包[对应 load]
+search   # 在 docker hub 中搜索镜像
+start    # 启动容器
+stop     # 停止容器
+tag      # 给源中镜像打标签
+top      # 查看容器中运行的进程信息
+unpause  # 取消暂停容器
+version  # 查看 docker 版本号
+wait     # 截取容器停止时的退出状态值
+stats    # 查看资源占用情况
+```
+
 
 # 第 4 章、Docker镜像
 ## 1、是什么
