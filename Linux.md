@@ -1561,6 +1561,12 @@ done
 netcat可以模拟 TCP服务端和客户端、UDP服务端和客户端、UNIX socket服务端和客户端、端口扫描、传输文件、将服务器bash暴露给远程客户端、内网穿透，反向获取防火墙后的机器的bash
 
 ```bash
+# Ubuntu / Debian 安装
+apt install -y netcat-openbsd
+# CentOS / RHEL / Rocky / AlmaLinux 安装
+yum install -y nc
+dnf install -y nc # 新版
+
 # 1、模拟TCP服务端
 nc -lk 9090
 
